@@ -2,13 +2,13 @@ import React from "react";
 import { useState, useRef, useEffect } from "react";
 import { Card, Form, Button, InputGroup, Badge } from "react-bootstrap";
 
-
 function Chatbot() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const chatBodyRef = useRef(null); // Para hacer scroll automático
   const lastBotMessageRef = useRef(null); // para focus en inicio del mensaje del bot
   const [isOpen, setIsOpen] = useState(false); // para mostrar u ocultar el chat
+  const inputRef = useRef(null);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -21,11 +21,14 @@ function Chatbot() {
 
     try {
       //const response = await fetch("http://localhost:8000/chat", {
-      const response = await fetch("https://vibeschatbotpython-production.up.railway.app/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userInput }),
-      });
+      const response = await fetch(
+        "https://vibeschatbotpython-production.up.railway.app/chat",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userInput }),
+        }
+      );
 
       const data = await response.json();
 
@@ -39,6 +42,12 @@ function Chatbot() {
     }
   };
 
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+  
 
   useEffect(() => {
     if (!messages.length) return;
@@ -64,20 +73,19 @@ function Chatbot() {
       {/* <h3>CHATBOT</h3> */}
       {isOpen && (
         <div className="chat-wrapper">
-          <Card className="chat-mobile"
-          // className="chat-card"
+          <Card
+            className="chat-mobile"
+            // className="chat-card"
 
-          style={{
-            position: "fixed",
-            bottom: "90px", // justo encima del botón
-            right: "20px",
-            width: "420px",
-            maxWidth: "420px",
-            height: "500px",
-            zIndex: 1000,
-          
-            
-          }}
+            style={{
+              position: "fixed",
+              bottom: "90px", // justo encima del botón
+              right: "20px",
+              width: "420px",
+              maxWidth: "420px",
+              height: "500px",
+              zIndex: 1000,
+            }}
           >
             {/* Cuerpo del chat con scroll */}
             <Card.Body
@@ -91,7 +99,7 @@ function Chatbot() {
               {messages.map((msg, index) => {
                 const isLastBotMessage =
                   msg.sender === "bot" && index === messages.length - 1;
-          
+
                 return (
                   <div
                     key={index}
@@ -117,7 +125,7 @@ function Chatbot() {
                 );
               })}
             </Card.Body>
-          
+
             {/* Footer con input */}
             <Card.Footer>
               <Form
@@ -128,12 +136,17 @@ function Chatbot() {
               >
                 <div className="d-flex">
                   <Form.Control
+                    ref={inputRef}
                     type="text"
                     placeholder="Escribe un mensaje..."
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                   />
-                  <Button variant="primary" onClick={handleSend} className="ms-2">
+                  <Button
+                    variant="primary"
+                    onClick={handleSend}
+                    className="ms-2"
+                  >
                     Enviar
                   </Button>
                 </div>
@@ -143,23 +156,22 @@ function Chatbot() {
         </div>
       )}
 
-<Button
-  variant="primary"
-  onClick={() => setIsOpen((prev) => !prev)} // 👈 toggle
-  style={{
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    zIndex: 1000,
-    borderRadius: "50%",
-    width: "60px",
-    height: "60px",
-    padding: 0,
-  }}
->
-  {isOpen ? "✕" : "Chat🤖"}  {/* 👈 Cambia el ícono según estado */}
-</Button>
-
+      <Button
+        variant="primary"
+        onClick={() => setIsOpen((prev) => !prev)} // 👈 toggle
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+          borderRadius: "50%",
+          width: "60px",
+          height: "60px",
+          padding: 0,
+        }}
+      >
+        {isOpen ? "✕" : "Chat🤖"} {/* 👈 Cambia el ícono según estado */}
+      </Button>
     </>
   );
 }

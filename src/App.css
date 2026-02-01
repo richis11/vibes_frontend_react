@@ -5,13 +5,10 @@
     transform: translateX(50%);
     width: 95vw !important;
     max-width: 95vw !important;
-    height: 85vh !important;
-    bottom: 80px !important;
+    height: 75vh !important;
+    bottom: 90px !important;
   }
 }
-
-
-
 
 /* .chat-wrapper {
   position: fixed;
@@ -21,8 +18,6 @@
   height: 500px;
   z-index: 1000;
 } */
-
-
 
 /* .chat-card {
   position: "fixed";
