@@ -19,6 +19,11 @@ function Chatbot() {
     const userInput = input;
     setInput("");
 
+    // 🔥 volver a enfocar inmediatamente
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+
     try {
       //const response = await fetch("http://localhost:8000/chat", {
       const response = await fetch(
@@ -47,7 +52,6 @@ function Chatbot() {
       inputRef.current.focus();
     }
   }, [isOpen]);
-  
 
   useEffect(() => {
     if (!messages.length) return;
