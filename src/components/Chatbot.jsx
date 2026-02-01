@@ -20,7 +20,8 @@ function Chatbot() {
     setInput("");
 
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      //const response = await fetch("http://localhost:8000/chat", {
+      const response = await fetch("https://vibeschatbotpython-production.up.railway.app/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userInput }),
@@ -38,12 +39,6 @@ function Chatbot() {
     }
   };
 
-  // Scroll automático cuando llegan mensajes nuevos
-  // useEffect(() => {
-  //   if (chatBodyRef.current) {
-  //     chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-  //   }
-  // }, [messages]);
 
   useEffect(() => {
     if (!messages.length) return;
