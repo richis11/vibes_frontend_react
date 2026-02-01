@@ -1,3 +1,70 @@
+@media (max-width: 768px) {
+  .chat-mobile {
+    right: 50% !important;
+    left: auto !important;
+    transform: translateX(50%);
+    width: 95vw !important;
+    max-width: 95vw !important;
+    height: 85vh !important;
+    bottom: 80px !important;
+  }
+}
+
+
+
+
+/* .chat-wrapper {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 420px;
+  height: 500px;
+  z-index: 1000;
+} */
+
+
+
+/* .chat-card {
+  position: "fixed";
+  bottom: "80px";
+  right: "50%";
+    transform: "translateX(50%)"; 
+  width: "420px";
+  max-width: "95vw";
+  height: "500px";
+  max-height: "80vh";
+  z-index: 1000; 
+  padding: 6em;
+  
+  
+} */
+
+/* style={{
+  position: "fixed",
+  bottom: "80px",
+  right: "50%",
+  transform: "translateX(50%)", // 👈 centra en mobile
+
+  width: "420px",
+  maxWidth: "95vw",
+  height: "500px",
+  maxHeight: "80vh",
+
+  zIndex: 1000,
+}} */
+
+/* 📱 Mobile */
+/* @media (max-width: 768px) {
+  .chat-card {
+    right: 50%;
+    transform: translateX(50%);
+  }
+} */
+
+
+
+
+/* ********************************************************** */
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -34,9 +101,10 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 1em;
 }
 
 .read-the-docs {
   color: #888;
 }
+

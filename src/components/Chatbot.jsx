@@ -63,78 +63,84 @@ function Chatbot() {
     <>
       {/* <h3>CHATBOT</h3> */}
       {isOpen && (
-        <Card
-        style={{
-          position: "fixed",
-          bottom: "90px", // justo encima del botón
-          right: "20px",
-          width: "420px",
-          maxWidth: "420px",
-          height: "500px",
-          zIndex: 1000,
-        }}
-        >
-          {/* Cuerpo del chat con scroll */}
-          <Card.Body
-            ref={chatBodyRef}
-            style={{
-              overflowY: "auto",
-              display: "flex",
-              flexDirection: "column",
-            }}
+        <div className="chat-wrapper">
+          <Card className="chat-mobile"
+          // className="chat-card"
+
+          style={{
+            position: "fixed",
+            bottom: "90px", // justo encima del botón
+            right: "20px",
+            width: "420px",
+            maxWidth: "420px",
+            height: "500px",
+            zIndex: 1000,
+          
+            
+          }}
           >
-            {messages.map((msg, index) => {
-              const isLastBotMessage =
-                msg.sender === "bot" && index === messages.length - 1;
-
-              return (
-                <div
-                  key={index}
-                  ref={isLastBotMessage ? lastBotMessageRef : null}
-                  style={{
-                    alignSelf:
-                      msg.sender === "user" ? "flex-end" : "flex-start",
-                    backgroundColor:
-                      msg.sender === "user" ? "#0d6efd" : "#dadada",
-                    color: msg.sender === "user" ? "white" : "black",
-                    padding: "8px 12px",
-                    borderRadius: "15px",
-                    marginBottom: "8px",
-                    maxWidth: "70%",
-                    whiteSpace: "pre-wrap",
-                    overflowWrap: "anywhere",
-                    wordBreak: "break-word",
-                    textAlign: "left",
-                  }}
-                >
-                  {msg.text}
-                </div>
-              );
-            })}
-          </Card.Body>
-
-          {/* Footer con input */}
-          <Card.Footer>
-            <Form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
+            {/* Cuerpo del chat con scroll */}
+            <Card.Body
+              ref={chatBodyRef}
+              style={{
+                overflowY: "auto",
+                display: "flex",
+                flexDirection: "column",
               }}
             >
-              <div className="d-flex">
-                <Form.Control
-                  type="text"
-                  placeholder="Escribe un mensaje..."
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                />
-                <Button variant="primary" onClick={handleSend} className="ms-2">
-                  Enviar
-                </Button>
-              </div>
-            </Form>
-          </Card.Footer>
-        </Card>
+              {messages.map((msg, index) => {
+                const isLastBotMessage =
+                  msg.sender === "bot" && index === messages.length - 1;
+          
+                return (
+                  <div
+                    key={index}
+                    ref={isLastBotMessage ? lastBotMessageRef : null}
+                    style={{
+                      alignSelf:
+                        msg.sender === "user" ? "flex-end" : "flex-start",
+                      backgroundColor:
+                        msg.sender === "user" ? "#0d6efd" : "#dadada",
+                      color: msg.sender === "user" ? "white" : "black",
+                      padding: "8px 12px",
+                      borderRadius: "15px",
+                      marginBottom: "8px",
+                      maxWidth: "70%",
+                      whiteSpace: "pre-wrap",
+                      overflowWrap: "anywhere",
+                      wordBreak: "break-word",
+                      textAlign: "left",
+                    }}
+                  >
+                    {msg.text}
+                  </div>
+                );
+              })}
+            </Card.Body>
+          
+            {/* Footer con input */}
+            <Card.Footer>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSend();
+                }}
+              >
+                <div className="d-flex">
+                  <Form.Control
+                    type="text"
+                    placeholder="Escribe un mensaje..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                  />
+                  <Button variant="primary" onClick={handleSend} className="ms-2">
+                    Enviar
+                  </Button>
+                </div>
+              </Form>
+            </Card.Footer>
+          </Card>
+        </div>
       )}
 
 <Button
