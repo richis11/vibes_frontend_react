@@ -5,19 +5,21 @@
     transform: translateX(50%);
     width: 95vw !important;
     max-width: 95vw !important;
-    height: 70vh !important;
-    bottom: 90px !important;
+    top:15px;
+    /* height: 72vh !important; */
+    /* bottom: 100px !important; */
+    
   }
 }
 
-/* .chat-wrapper {
+.chat-wrapper {
   position: fixed;
-  bottom: 90px;
+  /* bottom: 90px;
   right: 20px;
   width: 420px;
   height: 500px;
-  z-index: 1000;
-} */
+  z-index: 1000; */
+} 
 
 /* .chat-card {
   position: "fixed";

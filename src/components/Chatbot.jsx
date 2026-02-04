@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useRef, useEffect } from "react";
-import { Card, Form, Button, InputGroup, Badge } from "react-bootstrap";
+import { Card, Form, Button, InputGroup, Badge, Alert } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 function Chatbot() {
   const [messages, setMessages] = useState([]);
@@ -9,7 +10,14 @@ function Chatbot() {
   const lastBotMessageRef = useRef(null); // para focus en inicio del mensaje del bot
   const [isOpen, setIsOpen] = useState(false); // para mostrar u ocultar el chat
   const inputRef = useRef(null);
+  const [chatHeight, setChatHeight] = useState(550);
+  const [chatBottom, setChatBottom] = useState(100);
 
+  // toast.info("HELLO WORLD", {
+  //   autoClose: 1000, // x segundos (en milisegundos)
+  // });
+
+  //______________Enviar msg al chatbot
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -20,9 +28,9 @@ function Chatbot() {
     setInput("");
 
     // 🔥 volver a enfocar inmediatamente
-    setTimeout(() => {
-      inputRef.current?.focus();
-    }, 0);
+    // setTimeout(() => {
+    //   inputRef.current?.focus();
+    // }, 0);
 
     try {
       //const response = await fetch("http://localhost:8000/chat", {
@@ -36,7 +44,6 @@ function Chatbot() {
       );
 
       const data = await response.json();
-
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
     } catch (error) {
       console.error(error);
@@ -47,12 +54,55 @@ function Chatbot() {
     }
   };
 
+  //_______________________________________________________________________________
+  //_______________________________________________________________________________
+  //_______________Detectar teclado en pantalla
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isOpen]);
+    if (!window.visualViewport) return;
 
+    const handleResize = () => {
+      const vh = window.visualViewport.height;
+      const fullHeight = window.innerHeight;
+      const isMobile = window.innerWidth < 768;
+
+      if (!isMobile) return;
+
+      const diff = fullHeight - vh;
+      const keyboardOpen = diff > 150; // 🔥 FILTRO CLAVE
+
+      if (keyboardOpen) {
+        // ⌨️ solo cuando es teclado REAL
+        // toast.info("keyboard ON ", {
+        //   autoClose: 1000, // x segundos (en milisegundos)
+        // });
+        setChatHeight(vh - 10);
+        setChatBottom(260);
+      } else {
+        // 🚫 ignora scroll / barra navegador
+        // toast.info("keyboard OFF ", {
+        //   autoClose: 1000, // x segundos (en milisegundos)
+        // });
+        setChatHeight(550);
+        setChatBottom(90);
+      }
+    };
+
+    window.visualViewport.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.visualViewport.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  //_______________FOCUS AL ABRIR CHAT
+  // useEffect(() => {
+  //   if (isOpen && inputRef.current) {
+  //     inputRef.current.focus();
+  //   }
+  // }, [isOpen]);
+
+  //_______________Focus al final en msg user y el principio en msg bot
   useEffect(() => {
     if (!messages.length) return;
 
@@ -72,22 +122,25 @@ function Chatbot() {
     }
   }, [messages]);
 
+  //_______________________________________________________________________________
+  //_______________________________________________________________________________
   return (
     <>
       {/* <h3>CHATBOT</h3> */}
       {isOpen && (
         <div className="chat-wrapper">
           <Card
-            className="chat-mobile"
+            className="chat-mobile shadow"
             // className="chat-card"
 
             style={{
               position: "fixed",
-              bottom: "90px", // justo encima del botón
+              bottom: chatBottom, // justo encima del botón
+              //top: "80px",
               right: "20px",
               width: "420px",
               maxWidth: "420px",
-              height: "500px",
+              height: chatHeight,
               zIndex: 1000,
             }}
           >
@@ -105,14 +158,14 @@ function Chatbot() {
                   msg.sender === "bot" && index === messages.length - 1;
 
                 return (
-                  <div
+                  <div className="shadow"
                     key={index}
                     ref={isLastBotMessage ? lastBotMessageRef : null}
                     style={{
                       alignSelf:
                         msg.sender === "user" ? "flex-end" : "flex-start",
                       backgroundColor:
-                        msg.sender === "user" ? "#0d6efd" : "#dadada",
+                        msg.sender === "user" ? "#0d6efd" : "#edebeb",
                       color: msg.sender === "user" ? "white" : "black",
                       padding: "8px 12px",
                       borderRadius: "15px",

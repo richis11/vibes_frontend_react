@@ -1,24 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Chatbot from './components/Chatbot'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import logo from './assets/vibes.png'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import Chatbot from "./components/Chatbot";
+import "bootstrap/dist/css/bootstrap.min.css";
+import logo from "./assets/vibes.png";
+
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
 
 function App() {
-
-
   return (
     <>
-      <div>
+      <ToastContainer />
+      {/* <div>
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
         <a href="https://react.dev" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
         </a>
-      </div>
+      </div> */}
       {/* <h1>Vibes</h1> */}
 
       <img
@@ -27,11 +30,10 @@ function App() {
         style={{ width: "75%", height: "75%", borderRadius: "50%" }}
       />
       
-      
 
       <Chatbot></Chatbot>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
