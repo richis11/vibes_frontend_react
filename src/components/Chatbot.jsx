@@ -10,7 +10,7 @@ function Chatbot() {
   const lastBotMessageRef = useRef(null); // para focus en inicio del mensaje del bot
   const [isOpen, setIsOpen] = useState(false); // para mostrar u ocultar el chat
   const inputRef = useRef(null);
-  const [chatHeight, setChatHeight] = useState(550);
+  const [chatHeight, setChatHeight] = useState(500);
   const [chatBottom, setChatBottom] = useState(100);
 
   // toast.info("HELLO WORLD", {
@@ -76,14 +76,14 @@ function Chatbot() {
         //   autoClose: 1000, // x segundos (en milisegundos)
         // });
         setChatHeight(vh - 10);
-        setChatBottom(260);
+        //setChatBottom(260);
       } else {
         // 🚫 ignora scroll / barra navegador
         // toast.info("keyboard OFF ", {
         //   autoClose: 1000, // x segundos (en milisegundos)
         // });
-        setChatHeight(550);
-        setChatBottom(90);
+        setChatHeight(vh-110);
+        //setChatBottom(90);
       }
     };
 

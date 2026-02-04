@@ -29,6 +29,23 @@ function App() {
         alt="Logo del chat"
         style={{ width: "75%", height: "75%", borderRadius: "50%" }}
       />
+      <img
+        src={logo}
+        alt="Logo del chat"
+        style={{ width: "75%", height: "75%", borderRadius: "50%" }}
+      /><img
+      src={logo}
+      alt="Logo del chat"
+      style={{ width: "75%", height: "75%", borderRadius: "50%" }}
+    /><img
+    src={logo}
+    alt="Logo del chat"
+    style={{ width: "75%", height: "75%", borderRadius: "50%" }}
+  /><img
+  src={logo}
+  alt="Logo del chat"
+  style={{ width: "75%", height: "75%", borderRadius: "50%" }}
+/>
       
 
       <Chatbot></Chatbot>
