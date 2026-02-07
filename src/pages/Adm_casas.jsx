@@ -18,12 +18,19 @@ function Adm_casas() {
     estado: "",
   });
 
-const cargarCasas = () => {
-    getCasas().then(res => SetCasas(res.data));
-  };
+const cargarCasas = async () => {
+  try {
+    const res = await getCasas();
+    if (res?.data) {
+      SetCasas(res.data);
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   useEffect(() => {
-    console.log("cargando casas");
+    console.log("useEffect - cargando casas");
     getCasas()
       .then((res) => {
         SetCasas(res.data);
