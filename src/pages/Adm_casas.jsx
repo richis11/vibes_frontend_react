@@ -8,6 +8,8 @@ function Adm_casas() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [modo, setModo] = useState("crear");
+  const [casaSeleccionada, setCasaSeleccionada] = useState(null);
 
   const [casas, SetCasas] = useState([]);
   const [casa, SetCasa] = useState({
@@ -42,7 +44,18 @@ const cargarCasas = async () => {
       });
   }, []);
 
-  
+  const handleEditar = (casa) => {
+    setCasaSeleccionada(casa);
+    setModo("editar");
+    setShowModal(true);
+  };
+
+  const handleEliminar = async (id) => {
+    if (!window.confirm("¿Eliminar esta casa?")) return;
+
+    await eliminarCasa(id);
+    cargarCasas();
+  };
 
   // if (loading) {
   //   return (
@@ -74,13 +87,13 @@ const cargarCasas = async () => {
   //     await casas_service.crearCasa(casa);
   //   };
 
-  //   const editarCasa = async (id, casa) => {
-  //     await casas_service.editarCasa(id, casa);
-  //   };
+    // const editarCasa = async (id, casa) => {
+    //   await casas_service.editarCasa(id, casa);
+    // };
 
-  //   const eliminarCasa = async (id) => {
-  //     await casas_service.eliminarCasa(id);
-  //   };
+    const eliminarCasa = async (id) => {
+      await casas_service.eliminarCasa(id);
+    };
   //____________________________________________________________RETURN
   return (
     <div className="p-4">
@@ -100,6 +113,7 @@ const cargarCasas = async () => {
             <th>Dirección</th>
             <th>Precio</th>
             <th>Estado</th>
+            <th>Opciones</th>
           </tr>
         </thead>
         <tbody>
@@ -111,6 +125,25 @@ const cargarCasas = async () => {
               <td>{casa.direccion}</td>
               <td>${casa.precio}</td>
               <td>{casa.estado}</td>
+              <td>
+                <div className="d-flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    onClick={() => handleEditar(casa)}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => handleEliminar(casa.id)}
+                  >
+                    Eliminar
+                  </Button>
+                </div>
+
+              </td>
             </tr>
           ))}
         </tbody>
@@ -119,7 +152,9 @@ const cargarCasas = async () => {
       <Modal_casa
         show={showModal}
         handleClose={() => setShowModal(false)}
-        onCasaCreada={cargarCasas}
+        modo={modo}
+        casa={casaSeleccionada}
+        onSuccess={cargarCasas}
       />
     </div>
   )
