@@ -128,7 +128,7 @@ function Chatbot() {
     <>
       {/* <h3>CHATBOT</h3> */}
       {isOpen && (
-        <div className="chat-wrapper">
+        <div className="chat-wrapper" style={{zIndex:2000}}>
           <Card
             className="chat-mobile shadow"
             // className="chat-card"

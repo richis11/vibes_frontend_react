@@ -96,7 +96,9 @@ const cargarCasas = async () => {
     };
   //____________________________________________________________RETURN
   return (
-    <div className="p-4">
+    <>
+      <br />
+      <br />
       <div className="d-flex justify-content-between">
         <h2 className="mb-4">Casas disponibles</h2>
         <div>
@@ -156,7 +158,7 @@ const cargarCasas = async () => {
         casa={casaSeleccionada}
         onSuccess={cargarCasas}
       />
-    </div>
+    </>
   )
 }
 

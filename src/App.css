@@ -10,6 +10,9 @@
     /* bottom: 100px !important; */
     
   }
+  .table {
+    min-width: 900px;
+  }
 }
 
 .chat-wrapper {

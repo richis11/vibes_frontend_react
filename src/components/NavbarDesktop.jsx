@@ -17,7 +17,7 @@ import {
 
 function NavbarDesktop() {
   return (
-    <Navbar bg="light" expand="lg" className="border-bottom">
+    <Navbar bg="light" expand="lg" fixed="top" className="border-bottom">
       <Container>
         <Navbar.Brand as={Link} to="/" className="fw-bold text-info">
           Vibes
