@@ -132,14 +132,14 @@ const cargarCasas = async () => {
                     variant="warning"
                     onClick={() => handleEditar(casa)}
                   >
-                    Editar
+                    <i className="bi bi-pencil"></i>
                   </Button>
                   <Button
                     size="sm"
                     variant="danger"
                     onClick={() => handleEliminar(casa.id)}
                   >
-                    Eliminar
+                    <i className="bi bi-trash"></i>
                   </Button>
                 </div>
 

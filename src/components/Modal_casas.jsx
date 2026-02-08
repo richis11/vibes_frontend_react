@@ -74,7 +74,7 @@ function Modal_casa({ show, modo, casa, handleClose, onSuccess }) {
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>
-          {modo === "editar" ? "Editar casa" : "Nueva casa"}
+          {modo === "editar" ? "Editar "+`${form.nombre}` : "Nueva casa"}
         </Modal.Title>
       </Modal.Header>
 
