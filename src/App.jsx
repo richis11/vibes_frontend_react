@@ -14,8 +14,10 @@ import { toast, ToastContainer } from "react-toastify";
 
 import Chatbot from "./components/Chatbot";
 import NavbarDesktop from "./components/NavbarDesktop";
+import Adm_users from "./pages/Adm_users";
 import Adm_casas from './pages/Adm_casas';
 import Adm_clientes from './pages/Adm_clientes';
+import Adm_hosts from "./pages/Adm_hosts";
 import Adm_reservas from './pages/Adm_reservas';
 import Inicio_page from "./pages/Inicio_page";
 
@@ -38,8 +40,11 @@ function App() {
 
     <Routes>
         <Route path="/" element={ <Inicio_page/>} />
-        <Route path="/adm_casas" element={ <Adm_casas/>} />
+        
+        <Route path="/adm_users" element={ <Adm_users/>} />
         <Route path="/adm_clientes" element={ <Adm_clientes/>} />
+        <Route path="/adm_hosts" element={ <Adm_hosts/>} />
+        <Route path="/adm_casas" element={ <Adm_casas/>} />
         <Route path="/adm_reservas" element={ <Adm_reservas/>} />
     </Routes>
 

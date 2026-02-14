@@ -31,6 +31,18 @@ function NavbarDesktop() {
               Inicio
             </Nav.Link>
 
+            <Nav.Link as={Link} to="/adm_users">
+              Users
+            </Nav.Link>
+
+            <Nav.Link as={Link} to="/adm_clientes">
+              Clientes (personas)
+            </Nav.Link>
+
+            <Nav.Link as={Link} to="/adm_hosts">
+              Hosts
+            </Nav.Link>
+
             <Nav.Link as={Link} to="/adm_casas">
               Casas
             </Nav.Link>

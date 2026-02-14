@@ -14,9 +14,11 @@ function Modal_casa({ show, modo, casa, handleClose, onSuccess }) {
   });
 
   const [loading, setLoading] = useState(false);
+   
 
     useEffect(() => {
       if (modo === "editar" && casa) {
+        
         setForm({
           nombre: casa.nombre || "",
           descripcion: casa.descripcion || "",
@@ -29,11 +31,11 @@ function Modal_casa({ show, modo, casa, handleClose, onSuccess }) {
           nombre: "",
           descripcion: "",
           direccion: "",
-          precio: 0,
+          precio: "",
           estado: "",
         });
       }
-    }, [modo, casa]);
+    }, [modo, show]);
 
   const handleChange = (e) => {
     setForm({
@@ -74,7 +76,7 @@ function Modal_casa({ show, modo, casa, handleClose, onSuccess }) {
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>
-          {modo === "editar" ? "Editar "+`${form.nombre}` : "Nueva casa"}
+          {modo === "editar" ? "Editar "+`${casa.nombre}` : "Nueva casa"}
         </Modal.Title>
       </Modal.Header>
 
@@ -119,7 +121,7 @@ function Modal_casa({ show, modo, casa, handleClose, onSuccess }) {
             <Form.Control
               type="text"
               name="precio"
-              value={form.precio || 0}
+              value={form.precio || ""}
               onChange={handleChange}
               required
             />

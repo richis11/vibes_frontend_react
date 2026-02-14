@@ -24,7 +24,7 @@ const eliminarCasa= async(id)=>{
 
 
 const getNewCasas= async()=>{
-    return (await api.get(`${baseURL}/new/products/`)).data;
+    return (await api.get(`${baseURL}/new/casas/`)).data;
 }
 
 

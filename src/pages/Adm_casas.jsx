@@ -102,7 +102,7 @@ const cargarCasas = async () => {
       <div className="d-flex justify-content-between">
         <h2 className="mb-4">Casas disponibles</h2>
         <div>
-          <Button onClick={() => setShowModal(true)}>Nueva</Button>
+          <Button onClick={() => {setShowModal(true);setModo("crear");}}>Nueva</Button>
         </div>
       </div>
 
