@@ -10,7 +10,7 @@ function usePersonas() {
     try {
       setLoading(true);
       const data = await personasService.getPersonas();
-      setPersonas(data);
+      setPersonas([...data].reverse());
       setError(null);
     } catch (err) {
       setError("Error al cargar personas");

@@ -10,6 +10,10 @@ const getPersonas = async () => {
   return (await api.get(`${baseURL}`)).data;
 };
 
+const getPersonasDisponibles= async()=>{
+    return (await api.get(`${baseURL}/personasDisponibles`)).data;
+}
+
 const getPersona = async (id) => {
   return (await api.get(`${baseURL}/${id}`)).data;
 };
@@ -32,6 +36,7 @@ const getNewPersonas = async () => {
 
 export default {
   getPersonas,
+  getPersonasDisponibles,
   getPersona,
   crearPersona,
   editarPersona,
