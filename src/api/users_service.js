@@ -9,6 +9,9 @@ const buscarUsers= async(query)=>{
 const getUsers= async()=>{
     return (await api.get(`${baseURL}`)).data;
 }
+const getUsersDisponibles= async()=>{
+    return (await api.get(`${baseURL}/usersDisponibles`)).data;
+}
 const getUser= async(id)=>{
     return (await api.get(`${baseURL}/${id}`)).data;
 }
@@ -30,6 +33,7 @@ const getNewUsers= async()=>{
 
 export default {
     getUsers,
+    getUsersDisponibles,
     getUser,
     crearUser,
     editarUser,
