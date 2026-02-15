@@ -8,7 +8,7 @@ function Modal_user({ show, modo, user, handleClose, onSuccess }) {
     password_hash: "",
     is_admin: false,
     estado: "activo",
-    stripe_customer_id: "",
+    stripe_customer_id: null,
   };
 
   const [form, setForm] = useState(initialState);
@@ -22,7 +22,7 @@ function Modal_user({ show, modo, user, handleClose, onSuccess }) {
         password_hash: "", // no mostramos password
         is_admin: user.is_admin || false,
         estado: user.estado || "activo",
-        stripe_customer_id: user.stripe_customer_id || "",
+        stripe_customer_id: user.stripe_customer_id || null,
       });
     } else {
       setForm(initialState);

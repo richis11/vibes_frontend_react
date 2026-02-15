@@ -4,8 +4,7 @@ import personasService from "../api/personas_service";
 import useUsersDisponibles from "../hooks/useUsersDisponibles";
 
 function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
-  const { usersDisponibles, loading, error, refetch } =
-    useUsersDisponibles();
+  const { usersDisponibles, loading, error, refetch } = useUsersDisponibles();
 
   const [form, setForm] = useState({
     user_id: "",
@@ -74,8 +73,7 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
   if (loading && modo === "crear")
     return <p className="mt-4">Cargando usuarios...</p>;
 
-  if (error)
-    return <p className="text-danger mt-4">{error}</p>;
+  if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -87,24 +85,33 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
 
       <Modal.Body>
         <Form>
-
           {/* 🔥 SELECT DE USUARIOS (solo en crear) */}
           {modo === "crear" && (
             <Form.Group className="mb-3">
               <Form.Label>Usuario</Form.Label>
+
               <Form.Select
                 name="user_id"
                 value={form.user_id}
                 onChange={handleChange}
                 required
+                disabled={!usersDisponibles || usersDisponibles.length === 0}
               >
-                <option value="">Seleccione un usuario</option>
+                {loading ? (
+                  <option>Cargando usuarios...</option>
+                ) : usersDisponibles && usersDisponibles.length > 0 ? (
+                  <>
+                    <option value="">Seleccione un usuario</option>
 
-                {usersDisponibles?.map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.id} - {user.email}
-                  </option>
-                ))}
+                    {usersDisponibles.map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name} - {user.email}
+                      </option>
+                    ))}
+                  </>
+                ) : (
+                  <option value="">No hay usuarios disponibles</option>
+                )}
               </Form.Select>
             </Form.Group>
           )}
@@ -170,7 +177,6 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
               <option value="eliminado">Eliminado</option>
             </Form.Select>
           </Form.Group>
-
         </Form>
       </Modal.Body>
 
