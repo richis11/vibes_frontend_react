@@ -46,6 +46,9 @@ function NavbarDesktop() {
             <Nav.Link as={Link} to="/adm_casas">
               Casas
             </Nav.Link>
+            <Nav.Link as={Link} to="/adm_reservas">
+              Reservas
+            </Nav.Link>
 
             {/* <Button variant="outline-secondary" size="sm">
               Iniciar sesión

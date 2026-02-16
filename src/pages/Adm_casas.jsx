@@ -1,48 +1,14 @@
-import { react, useState, useEffect } from "react";
-import casas_service from "../api/casas_service";
-import {Button, Table, Row, Col, Modal, Form} from "react-bootstrap";
-//import {Table, Spinner, Alert} from "react-bootstrap";
-import Modal_casa from "../components/Modal_casas";
+import { useState } from "react";
+import { Button, Table, Badge } from "react-bootstrap";
+import useCasas from "../hooks/useCasas";
+import Modal_casas from "../components/Modal_casas";
 
 function Adm_casas() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { casas, loading, error, refetch } = useCasas();
+
   const [showModal, setShowModal] = useState(false);
   const [modo, setModo] = useState("crear");
   const [casaSeleccionada, setCasaSeleccionada] = useState(null);
-
-  const [casas, SetCasas] = useState([]);
-  const [casa, SetCasa] = useState({
-    nombre: "",
-    descripcion: "",
-    direccion: "",
-    precio: 0,
-    estado: "",
-  });
-
-const cargarCasas = async () => {
-  try {
-    const res = await getCasas();
-    if (res?.data) {
-      SetCasas(res.data);
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-  useEffect(() => {
-    console.log("useEffect - cargando casas");
-    getCasas()
-      .then((res) => {
-        SetCasas(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError("Error al cargar las casas");
-        setLoading(false);
-      });
-  }, []);
 
   const handleEditar = (casa) => {
     setCasaSeleccionada(casa);
@@ -50,116 +16,125 @@ const cargarCasas = async () => {
     setShowModal(true);
   };
 
-  const handleEliminar = async (id) => {
-    if (!window.confirm("¿Eliminar esta casa?")) return;
-
-    await eliminarCasa(id);
-    cargarCasas();
+  const handleNuevo = () => {
+    setCasaSeleccionada(null);
+    setModo("crear");
+    setShowModal(true);
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="text-center mt-5">
-  //       <Spinner animation="border" />
-  //     </div>
-  //   );
-  // }
-
-//   if (error) {
-//     return (
-//       <Alert variant="danger" className="mt-4">
-//         {error}
-//       </Alert>
-//     );
-//   }
-
-  //____________________________ LLAMAR A CASAS SERVICES
-  const getCasas = async () => {
-    let lista_casas = await casas_service.getCasas();
-    SetCasas(lista_casas.reverse());
+  const renderEstado = (estado) => {
+    switch (estado) {
+      case "activa":
+        return <Badge bg="success">Activa</Badge>;
+      case "inactiva":
+        return <Badge bg="secondary">Inactiva</Badge>;
+      case "suspendida":
+        return <Badge bg="warning">Suspendida</Badge>;
+      case "eliminada":
+        return <Badge bg="danger">Eliminada</Badge>;
+      default:
+        return <Badge bg="dark">{estado}</Badge>;
+    }
   };
 
-  //   const getCasa = async (id) => {
-  //     SetCasa(await casas_service.getCasa(id));
-  //   };
+  if (loading) return <p className="mt-4">Cargando casas...</p>;
+  if (error) return <p className="text-danger mt-4">{error}</p>;
 
-  //   const crearCasa = async (casa) => {
-  //     await casas_service.crearCasa(casa);
-  //   };
-
-    // const editarCasa = async (id, casa) => {
-    //   await casas_service.editarCasa(id, casa);
-    // };
-
-    const eliminarCasa = async (id) => {
-      await casas_service.eliminarCasa(id);
-    };
-  //____________________________________________________________RETURN
   return (
     <>
       <br />
-      <br />
-      <div className="d-flex justify-content-between">
-        <h2 className="mb-4">Casas disponibles</h2>
-        <div>
-          <Button onClick={() => {setShowModal(true);setModo("crear");}}>Nueva</Button>
-        </div>
+
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h2>Administración de Casas</h2>
+        <Button variant="primary" onClick={handleNuevo}>
+          Nueva Casa
+        </Button>
       </div>
 
       <Table striped bordered hover responsive className="text-start">
         <thead>
           <tr>
-            <th>#</th>
+            <th>ID</th>
+            <th>Host ID</th>
             <th>Nombre</th>
             <th>Descripción</th>
             <th>Dirección</th>
             <th>Precio</th>
+            <th>Disponibilidad</th>
             <th>Estado</th>
+            <th>Creado</th>
+            <th>Actualizado</th>
+            <th>Eliminado</th>
             <th>Opciones</th>
           </tr>
         </thead>
+
         <tbody>
-          {casas.map((casa, index) => (
+          {casas.map((casa) => (
             <tr key={casa.id}>
               <td>{casa.id}</td>
-              <td>{casa.nombre}</td>
-              <td>{casa.descripcion}</td>
-              <td>{casa.direccion}</td>
-              <td>${casa.precio}</td>
-              <td>{casa.estado}</td>
-              <td>
-                <div className="d-flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="warning"
-                    onClick={() => handleEditar(casa)}
-                  >
-                    <i className="bi bi-pencil"></i>
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="danger"
-                    onClick={() => handleEliminar(casa.id)}
-                  >
-                    <i className="bi bi-trash"></i>
-                  </Button>
-                </div>
 
+              <td>{casa.host_id}</td>
+
+              <td>{casa.nombre}</td>
+
+              <td>
+                {casa.descripcion
+                  ? casa.descripcion.substring(0, 40) + "..."
+                  : "-"}
+              </td>
+
+              <td>{casa.direccion}</td>
+
+              <td>${parseFloat(casa.precio).toFixed(2)}</td>
+
+              <td>
+                <Badge bg="info">{casa.disponibilidad}</Badge>
+              </td>
+
+              <td>{renderEstado(casa.estado)}</td>
+
+              <td>
+                {casa.created_at
+                  ? new Date(casa.created_at).toLocaleString()
+                  : "-"}
+              </td>
+
+              <td>
+                {casa.updated_at
+                  ? new Date(casa.updated_at).toLocaleString()
+                  : "-"}
+              </td>
+
+              <td>
+                {casa.deleted_at
+                  ? new Date(casa.deleted_at).toLocaleString()
+                  : "-"}
+              </td>
+
+              <td>
+                <Button
+                  size="sm"
+                  variant="warning"
+                  onClick={() => handleEditar(casa)}
+                >
+                  Editar
+                </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
 
-      <Modal_casa
+      <Modal_casas
         show={showModal}
-        handleClose={() => setShowModal(false)}
         modo={modo}
         casa={casaSeleccionada}
-        onSuccess={cargarCasas}
+        handleClose={() => setShowModal(false)}
+        onSuccess={refetch}
       />
     </>
-  )
+  );
 }
 
 export default Adm_casas;
