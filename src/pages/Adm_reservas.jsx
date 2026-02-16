@@ -58,32 +58,22 @@ function Adm_reservas() {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Casa ID</th>
-            <th>Guest ID</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
+            <th>Casa</th>
+            <th>Guest</th>
+            <th>Inicio</th>
+            <th>Fin</th>
             <th>Noches</th>
-            <th>Precio/Noche</th>
-            <th>Subtotal</th>
-            <th>Comisión</th>
             <th>Total</th>
             <th>Moneda</th>
             <th>Estado</th>
-            <th>Stripe Payment</th>
-            <th>Stripe Transfer</th>
-            <th>Cancelada Por</th>
-            <th>Motivo Cancelación</th>
-            <th>Creado</th>
-            <th>Actualizado</th>
-            <th>Eliminado</th>
+            <th>Creada</th>
             <th>Opciones</th>
           </tr>
         </thead>
-
         <tbody>
           {reservas.length === 0 ? (
             <tr>
-              <td colSpan="20" className="text-center text-muted">
+              <td colSpan="11" className="text-center text-muted">
                 No hay reservas disponibles
               </td>
             </tr>
@@ -107,37 +97,18 @@ function Adm_reservas() {
                 </td>
 
                 <td>{reserva.noches}</td>
-                <td>{reserva.precio_por_noche}</td>
-                <td>{reserva.subtotal}</td>
-                <td>{reserva.comision_plataforma}</td>
 
                 <td>
                   {reserva.total} {reserva.moneda}
                 </td>
 
                 <td>{reserva.moneda}</td>
-                <td>{renderEstado(reserva.estado)}</td>
 
-                <td>{reserva.stripe_payment_intent_id || "-"}</td>
-                <td>{reserva.stripe_transfer_id || "-"}</td>
-                <td>{reserva.cancelada_por || "-"}</td>
-                <td>{reserva.motivo_cancelacion || "-"}</td>
+                <td>{renderEstado(reserva.estado)}</td>
 
                 <td>
                   {reserva.created_at
                     ? new Date(reserva.created_at).toLocaleString()
-                    : "-"}
-                </td>
-
-                <td>
-                  {reserva.updated_at
-                    ? new Date(reserva.updated_at).toLocaleString()
-                    : "-"}
-                </td>
-
-                <td>
-                  {reserva.deleted_at
-                    ? new Date(reserva.deleted_at).toLocaleString()
                     : "-"}
                 </td>
 
