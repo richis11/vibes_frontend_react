@@ -14,6 +14,10 @@ const getReserva = async (id) => {
     return (await api.get(`${baseURL}/${id}`)).data;
 }
 
+const getReservasPorGuest = async (guestId) => {
+    return (await api.get(`${baseURL}/guest/${guestId}`)).data;
+}
+
 const crearReserva = async (reserva) => {
     return (await api.post(`${baseURL}`, reserva));
 }
@@ -33,6 +37,7 @@ const getNewReservas = async () => {
 export default {
     getReservas,
     getReserva,
+    getReservasPorGuest,
     crearReserva,
     editarReserva,
     eliminarReserva,

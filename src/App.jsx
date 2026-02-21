@@ -23,6 +23,10 @@ import Adm_reservas from "./pages/Adm_reservas";
 import Vitrina_casas from "./pages/Vitrina_casas";
 import Detalle_casa from "./pages/Detalle_casa";
 
+import Mis_reservas from "./pages/Mis_reservas";
+
+import Panel_host from "./pages/Panel_host";
+
 function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
@@ -59,6 +63,24 @@ function AppLayout() {
           element={
             <ProtectedRoute>
               <Detalle_casa />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/mis_reservas"
+          element={
+            <ProtectedRoute>
+              <Mis_reservas />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/mi-panel"
+          element={
+            <ProtectedRoute>
+              <Panel_host />
             </ProtectedRoute>
           }
         />

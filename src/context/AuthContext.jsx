@@ -4,7 +4,7 @@ import { tokenStorage } from "../utils/tokenStorage";
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null); // { id, email, is_admin, nombres, apellidos }
+  const [user, setUser] = useState(null);       // { id, email, is_admin, nombres, apellidos }
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true); // para no flashear rutas antes de leer storage
 
@@ -33,13 +33,16 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
-  const isAdmin = user?.is_admin === true;
+  const isAdmin   = user?.is_admin === true;
+  const isHost    = !!user?.host_id;
   const isLoggedIn = !!token && !!user;
 
   return (
-    <AuthContext.Provider
-      value={{ user, token, loading, isAdmin, isLoggedIn, login, logout }}
-    >
+    <AuthContext.Provider value={{
+      user, token, loading,
+      isAdmin, isHost, isLoggedIn,
+      login, logout,
+    }}>
       {children}
     </AuthContext.Provider>
   );
