@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import reservasService from "../api/reservas_service";
-import { useAuth } from "../context/Authcontext";
+import { useAuth } from "../context/AuthContext";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80";

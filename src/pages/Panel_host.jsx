@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import casasService from "../api/casas_service";
-import { useAuth } from "../context/Authcontext";
+import { useAuth } from "../context/AuthContext";
 import Modal_casa_host from "../components/Modal_casa_host";
 
 const IMAGEN_GENERICA =

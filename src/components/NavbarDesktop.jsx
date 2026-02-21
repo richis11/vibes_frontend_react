@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Nav, Navbar, Container, NavDropdown } from "react-bootstrap";
-import { useAuth } from "../context/Authcontext";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
 function NavbarDesktop() {

@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
-import { AuthProvider } from "./context/Authcontext";
+import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import NavbarDesktop from "./components/NavbarDesktop";

@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/Authcontext";
+import { useAuth } from "../context/AuthContext";
 
 // requireAuth: true  → solo usuarios logueados
 // requireAdmin: true → solo admins
