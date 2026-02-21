@@ -1,21 +1,18 @@
-import React from 'react'
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Nav,
-  Navbar,
-  NavbarBrand,
-  Dropdown,
-  NavDropdown,
-  InputGroup,
-  ButtonGroup,
-  Container
-} from "react-bootstrap";
-
-
+import { Link, useNavigate } from "react-router-dom";
+import { Nav, Navbar, Container, NavDropdown } from "react-bootstrap";
+import { useAuth } from "../context/Authcontext";
+import { toast } from "react-toastify";
 
 function NavbarDesktop() {
+  const { user, isAdmin, isLoggedIn, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    toast.info("Sesión cerrada");
+    navigate("/login");
+  };
+
   return (
     <Navbar bg="light" expand="lg" fixed="top" className="border-bottom">
       <Container>
@@ -27,37 +24,70 @@ function NavbarDesktop() {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto align-items-lg-center gap-2">
-            <Nav.Link as={Link} to="/">
-              Inicio
-            </Nav.Link>
 
-            <Nav.Link as={Link} to="/adm_users">
-              Users
-            </Nav.Link>
+            <Nav.Link as={Link} to="/">Inicio</Nav.Link>
 
-            <Nav.Link as={Link} to="/adm_clientes">
-              Clientes (personas)
-            </Nav.Link>
+            {/* Visible para todos los logueados */}
+            <Nav.Link as={Link} to="/casas">Casas</Nav.Link>
 
-            <Nav.Link as={Link} to="/adm_hosts">
-              Hosts
-            </Nav.Link>
+            {/* Solo admin */}
+            {isAdmin && (
+              <NavDropdown title="Administración" id="admin-dropdown">
+                <NavDropdown.Item as={Link} to="/adm_users">
+                  <i className="bi bi-people me-2" />Users
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/adm_clientes">
+                  <i className="bi bi-person-lines-fill me-2" />Clientes
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/adm_hosts">
+                  <i className="bi bi-house-heart me-2" />Hosts
+                </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/adm_casas">
+                  <i className="bi bi-house-heart me-2" />Casas
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item as={Link} to="/adm_reservas">
+                  <i className="bi bi-calendar-check me-2" />Reservas
+                </NavDropdown.Item>
+              </NavDropdown>
+            )}
 
-            <Nav.Link as={Link} to="/adm_casas">
-              Casas
-            </Nav.Link>
-            <Nav.Link as={Link} to="/adm_reservas">
-              Reservas
-            </Nav.Link>
+            {/* Usuario logueado: avatar/nombre con dropdown */}
+            {isLoggedIn ? (
+              <NavDropdown
+                title={
+                  <span>
+                    <i className="bi bi-person-circle me-1" />
+                    {user?.nombres ?? user?.email}
+                    {isAdmin && (
+                      <span className="badge bg-info ms-2" style={{ fontSize: 10 }}>
+                        Admin
+                      </span>
+                    )}
+                  </span>
+                }
+                id="user-dropdown"
+                align="end"
+              >
+                <NavDropdown.ItemText className="text-muted" style={{ fontSize: 12 }}>
+                  {user?.email}
+                </NavDropdown.ItemText>
+                <NavDropdown.Divider />
+                <NavDropdown.Item onClick={handleLogout} className="text-danger">
+                  <i className="bi bi-box-arrow-right me-2" />Cerrar sesión
+                </NavDropdown.Item>
+              </NavDropdown>
+            ) : (
+              <Nav.Link as={Link} to="/login" className="btn btn-outline-info btn-sm px-3">
+                Iniciar sesión
+              </Nav.Link>
+            )}
 
-            {/* <Button variant="outline-secondary" size="sm">
-              Iniciar sesión
-            </Button> */}
           </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
-  )
+  );
 }
 
-export default NavbarDesktop
+export default NavbarDesktop;

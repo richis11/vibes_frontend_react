@@ -20,6 +20,9 @@ import Adm_personas from "./pages/Adm_personas";
 import Adm_hosts from "./pages/Adm_hosts";
 import Adm_reservas from "./pages/Adm_reservas";
 
+import Vitrina_casas from "./pages/Vitrina_casas";
+import Detalle_casa from "./pages/Detalle_casa";
+
 function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
@@ -32,7 +35,6 @@ function AppLayout() {
       <Routes>
         {/* Pública */}
         <Route path="/login" element={<Login_page />} />
-
         {/* Cualquier usuario logueado */}
         <Route
           path="/"
@@ -42,11 +44,21 @@ function AppLayout() {
             </ProtectedRoute>
           }
         />
+
         <Route
-          path="/adm_casas"
+          path="/casas"
           element={
             <ProtectedRoute>
-              <Adm_casas />
+              <Vitrina_casas />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/casas/:id"
+          element={
+            <ProtectedRoute>
+              <Detalle_casa />
             </ProtectedRoute>
           }
         />
@@ -73,6 +85,14 @@ function AppLayout() {
           element={
             <ProtectedRoute requireAdmin>
               <Adm_hosts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adm_casas"
+          element={
+            <ProtectedRoute>
+              <Adm_casas />
             </ProtectedRoute>
           }
         />
