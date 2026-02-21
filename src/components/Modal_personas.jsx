@@ -9,14 +9,15 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
   const [form, setForm] = useState({
     user_id: "",
     cedula: "",
-    nombre: "",
+    nombres: "",
+    apellidos: "",
+    fecha_nacimiento: "",
     telefono: "",
     direccion: "",
     foto_url: "",
     estado: "activo",
   });
 
-  // 🔥 Cuando se abre el modal en modo crear, refrescamos users disponibles
   useEffect(() => {
     if (show && modo === "crear") {
       refetch();
@@ -28,7 +29,11 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
       setForm({
         user_id: persona.user_id || "",
         cedula: persona.cedula || "",
-        nombre: persona.nombre || "",
+        nombres: persona.nombres || "",
+        apellidos: persona.apellidos || "",
+        fecha_nacimiento: persona.fecha_nacimiento
+          ? new Date(persona.fecha_nacimiento).toISOString().split("T")[0]
+          : "",
         telefono: persona.telefono || "",
         direccion: persona.direccion || "",
         foto_url: persona.foto_url || "",
@@ -38,7 +43,9 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
       setForm({
         user_id: "",
         cedula: "",
-        nombre: "",
+        nombres: "",
+        apellidos: "",
+        fecha_nacimiento: "",
         telefono: "",
         direccion: "",
         foto_url: "",
@@ -85,11 +92,9 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
 
       <Modal.Body>
         <Form>
-          {/* 🔥 SELECT DE USUARIOS (solo en crear) */}
           {modo === "crear" && (
             <Form.Group className="mb-3">
               <Form.Label>Usuario</Form.Label>
-
               <Form.Select
                 name="user_id"
                 value={form.user_id}
@@ -102,7 +107,6 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
                 ) : usersDisponibles && usersDisponibles.length > 0 ? (
                   <>
                     <option value="">Seleccione un usuario</option>
-
                     {usersDisponibles.map((user) => (
                       <option key={user.id} value={user.id}>
                         {user.name} - {user.email}
@@ -130,9 +134,32 @@ function Modal_persona({ show, handleClose, modo, persona, onSuccess }) {
             <Form.Label>Nombres</Form.Label>
             <Form.Control
               type="text"
-              name="nombre"
-              value={form.nombre}
+              name="nombres"
+              value={form.nombres}
               onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Apellidos</Form.Label>
+            <Form.Control
+              type="text"
+              name="apellidos"
+              value={form.apellidos}
+              onChange={handleChange}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Fecha de Nacimiento</Form.Label>
+            <Form.Control
+              type="date"
+              name="fecha_nacimiento"
+              value={form.fecha_nacimiento}
+              onChange={handleChange}
+              required
             />
           </Form.Group>
 

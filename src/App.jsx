@@ -1,67 +1,100 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-//import logo from "./assets/vibes.png";
-
-import { Routes, Route, useNavigate } from "react-router-dom";
-
 import "react-toastify/dist/ReactToastify.css";
-import { toast, ToastContainer } from "react-toastify";
 
-import Chatbot from "./components/Chatbot";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+
+import { AuthProvider } from "./context/Authcontext";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 import NavbarDesktop from "./components/NavbarDesktop";
-import Adm_users from "./pages/Adm_users";
-import Adm_casas from './pages/Adm_casas';
-import Adm_personas from './pages/Adm_personas';
-import Adm_hosts from "./pages/Adm_hosts";
-import Adm_reservas from './pages/Adm_reservas';
+import Chatbot from "./components/Chatbot";
+
+import Login_page from "./pages/Login_page";
 import Inicio_page from "./pages/Inicio_page";
+import Adm_users from "./pages/Adm_users";
+import Adm_casas from "./pages/Adm_casas";
+import Adm_personas from "./pages/Adm_personas";
+import Adm_hosts from "./pages/Adm_hosts";
+import Adm_reservas from "./pages/Adm_reservas";
 
+function AppLayout() {
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/login";
 
-function App() {
   return (
     <>
       <ToastContainer />
-      {/* <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div> */}
-      {/* <h1>Vibes</h1> */}
+      {!hideNavbar && <NavbarDesktop />}
 
-    <NavbarDesktop />
+      <Routes>
+        {/* Pública */}
+        <Route path="/login" element={<Login_page />} />
 
-    <Routes>
-        <Route path="/" element={ <Inicio_page/>} />
-        
-        <Route path="/adm_users" element={ <Adm_users/>} />
-        <Route path="/adm_clientes" element={ <Adm_personas/>} />
-        <Route path="/adm_hosts" element={ <Adm_hosts/>} />
-        <Route path="/adm_casas" element={ <Adm_casas/>} />
-        <Route path="/adm_reservas" element={ <Adm_reservas/>} />
-    </Routes>
+        {/* Cualquier usuario logueado */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Inicio_page />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adm_casas"
+          element={
+            <ProtectedRoute>
+              <Adm_casas />
+            </ProtectedRoute>
+          }
+        />
 
-    {/* <Adm_casas/>
-    <Adm_clientes/>
-    <Adm_reservas/> */}
+        {/* Solo admin */}
+        <Route
+          path="/adm_users"
+          element={
+            <ProtectedRoute requireAdmin>
+              <Adm_users />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adm_clientes"
+          element={
+            <ProtectedRoute requireAdmin>
+              <Adm_personas />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adm_hosts"
+          element={
+            <ProtectedRoute requireAdmin>
+              <Adm_hosts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/adm_reservas"
+          element={
+            <ProtectedRoute requireAdmin>
+              <Adm_reservas />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
 
-      {/* <img
-        src={logo}
-        alt="Logo del chat"
-        style={{ width: "75%", height: "75%", borderRadius: "50%" }}
-      /> */}
-      
-
-      <Chatbot/>
+      {!hideNavbar && <Chatbot />}
     </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppLayout />
+    </AuthProvider>
+  );
+}

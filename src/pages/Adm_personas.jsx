@@ -53,6 +53,8 @@ function Adm_personas() {
             <th>User ID</th>
             <th>Cédula</th>
             <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Fecha nacimiento</th>
             <th>Teléfono</th>
             <th>Dirección</th>
             <th>Foto</th>
@@ -70,7 +72,14 @@ function Adm_personas() {
               <td>{persona.id}</td>
               <td>{persona.user_id}</td>
               <td>{persona.cedula || "-"}</td>
-              <td>{persona.nombre}</td>
+              <td>{persona.nombres}</td>
+              <td>{persona.apellidos}</td>
+              <td>
+                {new Date(persona.fecha_nacimiento).toISOString().split("T")[0]}
+              </td>
+              {/* <td>
+                {new Date(persona.fecha_nacimiento).toLocaleDateString("es-EC")}
+              </td> */}
               <td>{persona.telefono || "-"}</td>
               <td>{persona.direccion || "-"}</td>
 

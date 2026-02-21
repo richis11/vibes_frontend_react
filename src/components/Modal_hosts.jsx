@@ -112,7 +112,7 @@ function Modal_host({ show, handleClose, modo, host, onSuccess }) {
 
                     {personasDisponibles.map((persona) => (
                       <option key={persona.id} value={persona.id}>
-                        {persona.nombre} - {persona.cedula}
+                        {persona.nombres} - {persona.apellidos}
                       </option>
                     ))}
                   </>
