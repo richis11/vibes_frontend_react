@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import reservasService from "../api/reservas_service";
 import { useAuth } from "../context/AuthContext";
+import casaImagenesService from "../api/casa_imagenes_service";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80";
@@ -123,7 +124,7 @@ function ReservaCard({ reserva }) {
         }}
       >
         <img
-          src={imgError ? IMAGEN_GENERICA : reserva.foto_url || IMAGEN_GENERICA}
+          src={imgError ? IMAGEN_GENERICA : reserva.imagen_principal || IMAGEN_GENERICA}
           alt="Casa"
           onError={() => setImgError(true)}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -354,23 +355,37 @@ export default function Mis_reservas() {
 
   useEffect(() => {
     const fetchReservas = async () => {
-      if (!user?.persona_id) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const data = await reservasService.getReservasPorGuest(user.persona_id);
-        setReservas([...data].reverse());
-      } catch (err) {
-        // 404 = sin reservas, no es error grave
-        if (err.response?.status !== 404) {
-          toast.error("Error al cargar tus reservas");
+  if (!user?.persona_id) {
+    setLoading(false);
+    return;
+  }
+  try {
+    const data = await reservasService.getReservasPorGuest(user.persona_id);
+    const ordenadas = [...data].reverse();
+
+    // Enriquecer cada reserva con la imagen principal de su casa
+    const reservasConImagen = await Promise.all(
+      ordenadas.map(async (reserva) => {
+        try {
+          const imagenes = await casaImagenesService.getImagenesPorCasa(reserva.casa_id);
+          const principal = imagenes.find((img) => img.es_principal) ?? imagenes[0];
+          return { ...reserva, imagen_principal: principal?.url ?? null };
+        } catch {
+          return { ...reserva, imagen_principal: null };
         }
-        setReservas([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+      })
+    );
+
+    setReservas(reservasConImagen);
+  } catch (err) {
+    if (err.response?.status !== 404) {
+      toast.error("Error al cargar tus reservas");
+    }
+    setReservas([]);
+  } finally {
+    setLoading(false);
+  }
+};
     fetchReservas();
   }, [user]);
 
