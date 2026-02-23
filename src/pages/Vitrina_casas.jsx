@@ -1,6 +1,9 @@
 import { useState } from "react";
-import useCasas from "../hooks/useCasas";
 import { useNavigate } from "react-router-dom";
+
+//import useCasas from "../hooks/useCasas";
+import useCasasConImagen from "../hooks/useCasasConImagen";
+
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80";
@@ -48,6 +51,7 @@ function CasaCard({ casa }) {
   const [hovered, setHovered] = useState(false);
   const navigate = useNavigate();
 
+
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -76,7 +80,7 @@ function CasaCard({ casa }) {
         }}
       >
         <img
-          src={imgError ? IMAGEN_GENERICA : casa.foto_url || IMAGEN_GENERICA}
+          src={imgError ? IMAGEN_GENERICA : casa.imagen_principal || IMAGEN_GENERICA}
           alt={casa.nombre}
           onError={() => setImgError(true)}
           style={{
@@ -269,7 +273,7 @@ function SkeletonCard() {
 
 // ─── Main ─────────────────────────────────────────────────────────────────
 export default function Vitrina_casas() {
-  const { casas, loading, error } = useCasas();
+  const { casas, loading, error } = useCasasConImagen();
   const [busqueda, setBusqueda] = useState("");
   const [filtroDisp, setFiltroDisp] = useState("todas");
 

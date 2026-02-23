@@ -3,9 +3,27 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import casasService from "../api/casas_service";
 import Modal_reservar from "../components/Modal_reservar";
+import casaImagenesService from "../api/casa_imagenes_service";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80";
+
+const arrowBtn = {
+  background: "rgba(255,255,255,0.12)",
+  border: "none",
+  borderRadius: 10,
+  width: 44,
+  height: 44,
+  color: "#fff",
+  fontSize: 28,
+  cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+  fontWeight: 300,
+  transition: "background 0.15s",
+};
 
 function InfoChip({ icon, label, value }) {
   return (
@@ -110,11 +128,26 @@ export default function Detalle_casa() {
   const [imgError, setImgError] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  const [imagenes, setImagenes] = useState([]);
+  const [imgActiva, setImgActiva] = useState(0); // índice de la imagen grande
+  const [lightbox, setLightbox] = useState(false); // modal fullscreen
+
   useEffect(() => {
     const fetchCasa = async () => {
       try {
-        const data = await casasService.getCasa(Number(id));
+        const [data, imgs] = await Promise.all([
+          casasService.getCasa(Number(id)),
+          casaImagenesService.getImagenesPorCasa(Number(id)),
+        ]);
         setCasa(data);
+
+        // Ordenar: principal primero, luego por orden
+        const ordenadas = [...imgs].sort((a, b) => {
+          if (a.es_principal) return -1;
+          if (b.es_principal) return 1;
+          return a.orden - b.orden;
+        });
+        setImagenes(ordenadas);
       } catch {
         toast.error("No se pudo cargar la casa");
         navigate("/casas");
@@ -190,64 +223,304 @@ export default function Detalle_casa() {
           </button>
 
           {/* Imagen principal */}
-          <div
-            style={{
-              borderRadius: 20,
-              overflow: "hidden",
-              position: "relative",
-              height: "clamp(220px, 40vw, 420px)",
-              marginBottom: 28,
-              boxShadow: "0 8px 40px rgba(0,140,200,0.18)",
-            }}
-          >
-            <img
-              src={imgSrc}
-              alt={casa.nombre}
-              onError={() => setImgError(true)}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-            {/* Gradiente inferior */}
+          {/* ── GALERÍA ─────────────────────────────────────────── */}
+          <div style={{ marginBottom: 28 }}>
+            {/* Imagen principal grande */}
             <div
+              onClick={() => imagenes.length > 0 && setLightbox(true)}
               style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(to top, rgba(0,20,40,0.65) 0%, transparent 55%)",
-              }}
-            />
-            {/* Badges sobre imagen */}
-            <div
-              style={{
-                position: "absolute",
-                top: 16,
-                left: 16,
-                display: "flex",
-                gap: 8,
+                borderRadius: 20,
+                overflow: "hidden",
+                position: "relative",
+                height: "clamp(220px, 40vw, 420px)",
+                boxShadow: "0 8px 40px rgba(0,140,200,0.18)",
+                cursor: imagenes.length > 0 ? "zoom-in" : "default",
+                marginBottom: imagenes.length > 1 ? 10 : 0,
               }}
             >
-              <Badge tipo="estado" valor={casa.estado} />
-              <Badge tipo="disp" valor={casa.disponibilidad} />
+              <img
+                src={
+                  imgError
+                    ? IMAGEN_GENERICA
+                    : imagenes[imgActiva]?.url || IMAGEN_GENERICA
+                }
+                alt={casa.nombre}
+                onError={() => setImgError(true)}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  transition: "opacity 0.25s ease",
+                }}
+              />
+              {/* Gradiente inferior */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background:
+                    "linear-gradient(to top, rgba(0,20,40,0.65) 0%, transparent 55%)",
+                }}
+              />
+              {/* Badges */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  left: 16,
+                  display: "flex",
+                  gap: 8,
+                }}
+              >
+                <Badge tipo="estado" valor={casa.estado} />
+                <Badge tipo="disp" valor={casa.disponibilidad} />
+              </div>
+              {/* Precio */}
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 20,
+                  right: 20,
+                  background: "rgba(0,20,40,0.75)",
+                  backdropFilter: "blur(8px)",
+                  borderRadius: 12,
+                  padding: "8px 16px",
+                  color: "#fff",
+                }}
+              >
+                <span style={{ fontSize: 11, opacity: 0.75 }}>desde </span>
+                <span style={{ fontSize: 24, fontWeight: 800 }}>
+                  ${parseFloat(casa.precio).toFixed(0)}
+                </span>
+                <span style={{ fontSize: 12, opacity: 0.75 }}> /noche</span>
+              </div>
+              {/* Contador de fotos */}
+              {imagenes.length > 1 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 20,
+                    left: 20,
+                    background: "rgba(0,20,40,0.65)",
+                    backdropFilter: "blur(6px)",
+                    borderRadius: 8,
+                    padding: "5px 10px",
+                    fontSize: 12,
+                    fontWeight: 600,
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  🖼️ {imgActiva + 1} / {imagenes.length}
+                </div>
+              )}
             </div>
-            {/* Precio sobre imagen */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: 20,
-                right: 20,
-                background: "rgba(0,20,40,0.75)",
-                backdropFilter: "blur(8px)",
-                borderRadius: 12,
-                padding: "8px 16px",
-                color: "#fff",
-              }}
-            >
-              <span style={{ fontSize: 11, opacity: 0.75 }}>desde </span>
-              <span style={{ fontSize: 24, fontWeight: 800 }}>
-                ${parseFloat(casa.precio).toFixed(0)}
-              </span>
-              <span style={{ fontSize: 12, opacity: 0.75 }}> /noche</span>
-            </div>
+
+            {/* Thumbnails */}
+            {imagenes.length > 1 && (
+              <div
+                style={{
+                  display: "flex",
+                  gap: 8,
+                  overflowX: "auto",
+                  paddingBottom: 4,
+                  scrollbarWidth: "thin",
+                }}
+              >
+                {imagenes.map((img, i) => (
+                  <div
+                    key={img.id}
+                    onClick={() => {
+                      setImgActiva(i);
+                      setImgError(false);
+                    }}
+                    style={{
+                      flexShrink: 0,
+                      width: 80,
+                      height: 60,
+                      borderRadius: 10,
+                      overflow: "hidden",
+                      cursor: "pointer",
+                      border:
+                        i === imgActiva
+                          ? "2.5px solid #00b4e6"
+                          : "2px solid transparent",
+                      opacity: i === imgActiva ? 1 : 0.65,
+                      transition: "all 0.18s ease",
+                      boxShadow:
+                        i === imgActiva
+                          ? "0 2px 12px rgba(0,180,230,0.35)"
+                          : "none",
+                    }}
+                  >
+                    <img
+                      src={img.url}
+                      alt=""
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
+          {/* ── LIGHTBOX ─────────────────────────────────────────── */}
+          {lightbox && (
+            <>
+              {/* Backdrop */}
+              <div
+                onClick={() => setLightbox(false)}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  zIndex: 2000,
+                  background: "rgba(0,10,20,0.93)",
+                  backdropFilter: "blur(8px)",
+                }}
+              />
+              {/* Contenido */}
+              <div
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  zIndex: 2010,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 20,
+                  gap: 16,
+                }}
+              >
+                {/* Botón cerrar */}
+                <button
+                  onClick={() => setLightbox(false)}
+                  style={{
+                    position: "absolute",
+                    top: 20,
+                    right: 20,
+                    background: "rgba(255,255,255,0.12)",
+                    border: "none",
+                    borderRadius: 10,
+                    width: 40,
+                    height: 40,
+                    color: "#fff",
+                    fontSize: 18,
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  ✕
+                </button>
+
+                {/* Imagen grande */}
+                <div
+                  style={{
+                    position: "relative",
+                    maxWidth: "90vw",
+                    maxHeight: "75vh",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 16,
+                  }}
+                >
+                  {/* Flecha izquierda */}
+                  {imagenes.length > 1 && (
+                    <button
+                      onClick={() => {
+                        setImgActiva(
+                          (imgActiva - 1 + imagenes.length) % imagenes.length,
+                        );
+                        setImgError(false);
+                      }}
+                      style={arrowBtn}
+                    >
+                      ‹
+                    </button>
+                  )}
+
+                  <img
+                    src={imagenes[imgActiva]?.url || IMAGEN_GENERICA}
+                    alt=""
+                    style={{
+                      maxWidth: "80vw",
+                      maxHeight: "72vh",
+                      objectFit: "contain",
+                      borderRadius: 16,
+                      boxShadow: "0 20px 60px rgba(0,0,0,0.6)",
+                    }}
+                  />
+
+                  {/* Flecha derecha */}
+                  {imagenes.length > 1 && (
+                    <button
+                      onClick={() => {
+                        setImgActiva((imgActiva + 1) % imagenes.length);
+                        setImgError(false);
+                      }}
+                      style={arrowBtn}
+                    >
+                      ›
+                    </button>
+                  )}
+                </div>
+
+                {/* Thumbnails en lightbox */}
+                {imagenes.length > 1 && (
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: 8,
+                      overflowX: "auto",
+                      maxWidth: "90vw",
+                    }}
+                  >
+                    {imagenes.map((img, i) => (
+                      <div
+                        key={img.id}
+                        onClick={() => {
+                          setImgActiva(i);
+                          setImgError(false);
+                        }}
+                        style={{
+                          flexShrink: 0,
+                          width: 64,
+                          height: 48,
+                          borderRadius: 8,
+                          overflow: "hidden",
+                          cursor: "pointer",
+                          border:
+                            i === imgActiva
+                              ? "2px solid #00b4e6"
+                              : "2px solid rgba(255,255,255,0.2)",
+                          opacity: i === imgActiva ? 1 : 0.55,
+                          transition: "all 0.18s",
+                        }}
+                      >
+                        <img
+                          src={img.url}
+                          alt=""
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           {/* Layout: info izq + card reserva der */}
           <div
@@ -359,10 +632,7 @@ export default function Detalle_casa() {
                   alignItems: "center",
                   gap: 10,
                 }}
-              >
-                <span style={{ fontSize: 20 }}>🖼️</span>
-                <span>Más imágenes y detalles del espacio próximamente</span>
-              </div>
+              ></div>
             </div>
 
             {/* Columna derecha — card reserva */}
@@ -484,6 +754,7 @@ export default function Detalle_casa() {
         show={showModal}
         onClose={() => setShowModal(false)}
         casa={casa}
+        imagenPrincipal={imagenes[0]?.url ?? null}
       />
     </>
   );

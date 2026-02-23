@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import casasService from "../api/casas_service";
 import { useAuth } from "../context/AuthContext";
 import Modal_casa_host from "../components/Modal_casa_host";
+import casaImagenesService from "../api/casa_imagenes_service";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80";
@@ -99,7 +100,7 @@ function CasaHostCard({ casa, onEditar }) {
         }}
       >
         <img
-          src={imgError ? IMAGEN_GENERICA : casa.foto_url || IMAGEN_GENERICA}
+          src={imgError ? IMAGEN_GENERICA : casa.imagen_principal || IMAGEN_GENERICA}
           alt={casa.nombre}
           onError={() => setImgError(true)}
           style={{
@@ -364,7 +365,25 @@ export default function Panel_host() {
     try {
       setLoading(true);
       const data = await casasService.getCasasPorHost(user.host_id);
-      setCasas([...data].reverse());
+      const ordenadas = [...data].reverse();
+
+      // Cargar imagen principal de cada casa en paralelo
+      const casasConImagen = await Promise.all(
+        ordenadas.map(async (casa) => {
+          try {
+            const imagenes = await casaImagenesService.getImagenesPorCasa(
+              casa.id,
+            );
+            const principal =
+              imagenes.find((img) => img.es_principal) ?? imagenes[0];
+            return { ...casa, imagen_principal: principal?.url ?? null };
+          } catch {
+            return { ...casa, imagen_principal: null };
+          }
+        }),
+      );
+
+      setCasas(casasConImagen);
     } catch (err) {
       if (err.response?.status !== 404)
         toast.error("Error al cargar tus casas");

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Table, Badge } from "react-bootstrap";
 import useCasas from "../hooks/useCasas";
 import Modal_casas from "../components/Modal_casas";
+import Modal_imagenes from "../components/Modal_imagenes";
 
 function Adm_casas() {
   const { casas, loading, error, refetch } = useCasas();
@@ -9,6 +10,9 @@ function Adm_casas() {
   const [showModal, setShowModal] = useState(false);
   const [modo, setModo] = useState("crear");
   const [casaSeleccionada, setCasaSeleccionada] = useState(null);
+
+  const [showImagenes, setShowImagenes] = useState(false);
+  const [casaImagenes, setCasaImagenes] = useState(null);
 
   const handleEditar = (casa) => {
     setCasaSeleccionada(casa);
@@ -20,6 +24,11 @@ function Adm_casas() {
     setCasaSeleccionada(null);
     setModo("crear");
     setShowModal(true);
+  };
+
+  const handleImagenes = (casa) => {
+    setCasaImagenes(casa);
+    setShowImagenes(true);
   };
 
   const renderEstado = (estado) => {
@@ -120,6 +129,14 @@ function Adm_casas() {
                 >
                   Editar
                 </Button>
+                <Button
+                  size="sm"
+                  variant="info"
+                  onClick={() => handleImagenes(casa)}
+                  title="Gestionar imágenes"
+                >
+                  <i className="bi bi-images" />
+                </Button>
               </td>
             </tr>
           ))}
@@ -132,6 +149,15 @@ function Adm_casas() {
         casa={casaSeleccionada}
         handleClose={() => setShowModal(false)}
         onSuccess={refetch}
+      />
+
+      <Modal_imagenes
+        show={showImagenes}
+        onClose={() => {
+          setShowImagenes(false);
+          setCasaImagenes(null);
+        }}
+        casa={casaImagenes}
       />
     </>
   );

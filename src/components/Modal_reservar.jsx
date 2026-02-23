@@ -3,12 +3,13 @@ import { toast } from "react-toastify";
 import reservasService from "../api/reservas_service";
 import { useAuth } from "../context/AuthContext";
 
+
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80";
 
 const COMISION = 0.10; // 10%
 
-export default function Modal_reservar({ show, onClose, casa }) {
+export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }) {
   const { user } = useAuth();
 
   const [fechaInicio, setFechaInicio] = useState("");
@@ -104,7 +105,7 @@ export default function Modal_reservar({ show, onClose, casa }) {
           {/* Header con imagen */}
           <div style={{ position: "relative", height: 160, overflow: "hidden", background: "#e8f6ff" }}>
             <img
-              src={casa.foto_url || IMAGEN_GENERICA}
+              src={imagenPrincipal || IMAGEN_GENERICA}
               alt={casa.nombre}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
               onError={(e) => { e.target.src = IMAGEN_GENERICA; }}
