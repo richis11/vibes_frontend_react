@@ -93,6 +93,13 @@ function NavbarDesktop() {
                 id="user-dropdown"
                 align="end"
               >
+                <NavDropdown.Item as={Link} to="/perfil">
+                  <i className="bi bi-person-badge me-2" />
+                  Mi Perfil
+                </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Divider />
+
                 <NavDropdown.ItemText
                   className="text-muted"
                   style={{ fontSize: 12 }}

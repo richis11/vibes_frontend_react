@@ -2,6 +2,16 @@ import api from "./api";
 
 const baseURL = "/personas";
 
+const subirFoto = async (id, file) => {
+  const formData = new FormData();
+  formData.append("foto", file);
+  return (
+    await api.post(`${baseURL}/${id}/foto`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  ).data;
+};
+
 const buscarPersonas = async (query) => {
   return (await api.get(`${baseURL}/buscar?q=${query}`)).data;
 };
@@ -43,4 +53,5 @@ export default {
   eliminarPersona,
   getNewPersonas,
   buscarPersonas,
+  subirFoto
 };

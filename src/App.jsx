@@ -27,6 +27,8 @@ import Mis_reservas from "./pages/Mis_reservas";
 
 import Panel_host from "./pages/Panel_host";
 
+import Perfil_page from "./pages/Perfil_page";
+
 function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
@@ -39,6 +41,7 @@ function AppLayout() {
       <Routes>
         {/* Pública */}
         <Route path="/login" element={<Login_page />} />
+
         {/* Cualquier usuario logueado */}
         <Route
           path="/"
@@ -81,6 +84,15 @@ function AppLayout() {
           element={
             <ProtectedRoute>
               <Panel_host />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/perfil"
+          element={
+            <ProtectedRoute>
+              <Perfil_page />
             </ProtectedRoute>
           }
         />
