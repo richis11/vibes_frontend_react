@@ -7,7 +7,7 @@ function Inicio_page() {
     <img
         src={logo}
         alt="Logo del chat"
-        style={{ width: "75%", height: "75%", borderRadius: "50%" }}
+        style={{ width: "40%", height: "40%", borderRadius: "50%" }}
       />
     </>
   )
