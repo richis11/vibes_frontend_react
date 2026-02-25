@@ -1,3 +1,4 @@
+// src/App.jsx
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -24,9 +25,7 @@ import Vitrina_casas from "./pages/Vitrina_casas";
 import Detalle_casa from "./pages/Detalle_casa";
 
 import Mis_reservas from "./pages/Mis_reservas";
-
 import Panel_host from "./pages/Panel_host";
-
 import Perfil_page from "./pages/Perfil_page";
 
 function AppLayout() {
@@ -39,37 +38,19 @@ function AppLayout() {
       {!hideNavbar && <NavbarDesktop />}
 
       <Routes>
-        {/* Pública */}
+        {/* ========== RUTAS PÚBLICAS ========== */}
         <Route path="/login" element={<Login_page />} />
+        
+        {/* Inicio - Acceso público */}
+        <Route path="/" element={<Inicio_page />} />
 
-        {/* Cualquier usuario logueado */}
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Inicio_page />
-            </ProtectedRoute>
-          }
-        />
+        {/* Vitrina de casas - Acceso público */}
+        <Route path="/casas" element={<Vitrina_casas />} />
 
-        <Route
-          path="/casas"
-          element={
-            <ProtectedRoute>
-              <Vitrina_casas />
-            </ProtectedRoute>
-          }
-        />
+        {/* Detalle de casa - Acceso público (pero reservar requiere login) */}
+        <Route path="/casas/:id" element={<Detalle_casa />} />
 
-        <Route
-          path="/casas/:id"
-          element={
-            <ProtectedRoute>
-              <Detalle_casa />
-            </ProtectedRoute>
-          }
-        />
-
+        {/* ========== RUTAS PROTEGIDAS (Usuario logueado) ========== */}
         <Route
           path="/mis_reservas"
           element={
@@ -97,7 +78,7 @@ function AppLayout() {
           }
         />
 
-        {/* Solo admin */}
+        {/* ========== RUTAS ADMIN ========== */}
         <Route
           path="/adm_users"
           element={
@@ -125,7 +106,7 @@ function AppLayout() {
         <Route
           path="/adm_casas"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requireAdmin>
               <Adm_casas />
             </ProtectedRoute>
           }

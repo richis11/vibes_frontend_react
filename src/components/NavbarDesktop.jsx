@@ -1,17 +1,17 @@
+// src/components/NavbarDesktop.jsx
 import { Link, useNavigate } from "react-router-dom";
 import { Nav, Navbar, Container, NavDropdown } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 
 function NavbarDesktop() {
-  const { user, isAdmin, isLoggedIn, logout } = useAuth();
+  const { user, isAdmin, isHost, isLoggedIn, logout } = useAuth();
   const navigate = useNavigate();
-  const { isHost } = useAuth();
 
   const handleLogout = () => {
     logout();
     toast.info("Sesión cerrada");
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -25,97 +25,101 @@ function NavbarDesktop() {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto align-items-lg-center gap-2">
+            {/* 👇 Rutas públicas - visibles para todos */}
             <Nav.Link as={Link} to="/">
               Inicio
             </Nav.Link>
 
-            {/* Visible para todos los logueados */}
             <Nav.Link as={Link} to="/casas">
               Casas
             </Nav.Link>
 
-            <Nav.Link as={Link} to="/mis_reservas">
-              <i className="bi bi-calendar-check me-2" />
-              Mis reservas
-            </Nav.Link>
-
-            {isHost && (
-              <Nav.Link as={Link} to="/mi-panel">
-                <i className="bi bi-house-gear me-2" />
-                Mis propiedades
-              </Nav.Link>
-            )}
-
-            {/* Solo admin */}
-            {isAdmin && (
-              <NavDropdown title="Administración" id="admin-dropdown">
-                <NavDropdown.Item as={Link} to="/adm_users">
-                  <i className="bi bi-people me-2" />
-                  Users
-                </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/adm_clientes">
-                  <i className="bi bi-person-lines-fill me-2" />
-                  Clientes
-                </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/adm_hosts">
-                  <i className="bi bi-house-heart me-2" />
-                  Hosts
-                </NavDropdown.Item>
-                <NavDropdown.Item as={Link} to="/adm_casas">
-                  <i className="bi bi-house-heart me-2" />
-                  Casas
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item as={Link} to="/adm_reservas">
+            {/* 👇 Rutas protegidas - solo para usuarios logueados */}
+            {isLoggedIn && (
+              <>
+                <Nav.Link as={Link} to="/mis_reservas">
                   <i className="bi bi-calendar-check me-2" />
-                  Reservas
-                </NavDropdown.Item>
-              </NavDropdown>
+                  Mis reservas
+                </Nav.Link>
+
+                {isHost && (
+                  <Nav.Link as={Link} to="/mi-panel">
+                    <i className="bi bi-house-gear me-2" />
+                    Mis propiedades
+                  </Nav.Link>
+                )}
+
+                {/* Solo admin */}
+                {isAdmin && (
+                  <NavDropdown title="Administración" id="admin-dropdown">
+                    <NavDropdown.Item as={Link} to="/adm_users">
+                      <i className="bi bi-people me-2" />
+                      Users
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/adm_clientes">
+                      <i className="bi bi-person-lines-fill me-2" />
+                      Clientes
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/adm_hosts">
+                      <i className="bi bi-house-heart me-2" />
+                      Hosts
+                    </NavDropdown.Item>
+                    <NavDropdown.Item as={Link} to="/adm_casas">
+                      <i className="bi bi-house-heart me-2" />
+                      Casas
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item as={Link} to="/adm_reservas">
+                      <i className="bi bi-calendar-check me-2" />
+                      Reservas
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                )}
+
+                {/* Dropdown de usuario */}
+                <NavDropdown
+                  title={
+                    <span>
+                      <i className="bi bi-person-circle me-1" />
+                      {user?.nombres ?? user?.email}
+                      {isAdmin && (
+                        <span
+                          className="badge bg-info ms-2"
+                          style={{ fontSize: 10 }}
+                        >
+                          Admin
+                        </span>
+                      )}
+                    </span>
+                  }
+                  id="user-dropdown"
+                  align="end"
+                >
+                  <NavDropdown.Item as={Link} to="/perfil">
+                    <i className="bi bi-person-badge me-2" />
+                    Mi Perfil
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.ItemText
+                    className="text-muted"
+                    style={{ fontSize: 12 }}
+                  >
+                    {user?.email}
+                  </NavDropdown.ItemText>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item
+                    onClick={handleLogout}
+                    className="text-danger"
+                  >
+                    <i className="bi bi-box-arrow-right me-2" />
+                    Cerrar sesión
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </>
             )}
 
-            {/* Usuario logueado: avatar/nombre con dropdown */}
-            {isLoggedIn ? (
-              <NavDropdown
-                title={
-                  <span>
-                    <i className="bi bi-person-circle me-1" />
-                    {user?.nombres ?? user?.email}
-                    {isAdmin && (
-                      <span
-                        className="badge bg-info ms-2"
-                        style={{ fontSize: 10 }}
-                      >
-                        Admin
-                      </span>
-                    )}
-                  </span>
-                }
-                id="user-dropdown"
-                align="end"
-              >
-                <NavDropdown.Item as={Link} to="/perfil">
-                  <i className="bi bi-person-badge me-2" />
-                  Mi Perfil
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Divider />
-
-                <NavDropdown.ItemText
-                  className="text-muted"
-                  style={{ fontSize: 12 }}
-                >
-                  {user?.email}
-                </NavDropdown.ItemText>
-                <NavDropdown.Divider />
-                <NavDropdown.Item
-                  onClick={handleLogout}
-                  className="text-danger"
-                >
-                  <i className="bi bi-box-arrow-right me-2" />
-                  Cerrar sesión
-                </NavDropdown.Item>
-              </NavDropdown>
-            ) : (
+            {/* 👇 Botón de login - solo visible si NO está logueado */}
+            {!isLoggedIn && (
               <Nav.Link
                 as={Link}
                 to="/login"

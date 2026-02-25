@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useAuth } from "../context/AuthContext"; // 👈 Importar
 import casasService from "../api/casas_service";
-import Modal_reservar from "../components/Modal_reservar";
 import casaImagenesService from "../api/casa_imagenes_service";
+import Modal_reservar from "../components/Modal_reservar";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800&q=80";
@@ -122,6 +123,7 @@ function Badge({ tipo, valor }) {
 export default function Detalle_casa() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth(); // 👈 Usar hook de autenticación
 
   const [casa, setCasa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -158,12 +160,24 @@ export default function Detalle_casa() {
     fetchCasa();
   }, [id]);
 
+
+   const handleReservarClick = () => {
+    if (!isLoggedIn) {
+      toast.info("Inicia sesión para reservar esta casa");
+      navigate("/login", { state: { from: `/casas/${id}` } }); // 👈 Guardar ruta de origen
+      return;
+    }
+    setShowModal(true);
+  };
+
   if (loading) return <PageSkeleton />;
   if (!casa) return null;
 
   const imgSrc = imgError ? IMAGEN_GENERICA : casa.foto_url || IMAGEN_GENERICA;
   const disponible =
     casa.disponibilidad === "disponible" && casa.estado === "activa";
+
+ 
 
   return (
     <>
@@ -673,7 +687,7 @@ export default function Detalle_casa() {
                   </p>
                   <button
                     className="reservar-btn"
-                    onClick={() => setShowModal(true)}
+                    onClick={handleReservarClick}
                     style={{
                       width: "100%",
                       padding: "13px",
@@ -689,7 +703,7 @@ export default function Detalle_casa() {
                       fontFamily: "'DM Sans', sans-serif",
                     }}
                   >
-                    Reservar ahora
+                    {isLoggedIn ? "Reservar ahora" : "Iniciar sesión para reservar"}
                   </button>
                   <p
                     style={{

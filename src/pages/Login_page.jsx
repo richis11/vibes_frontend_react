@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // 👈 Agregar useLocation
 import { toast } from "react-toastify";
 import authService from "../api/authService";
 import { useAuth } from "../context/AuthContext";
@@ -152,6 +152,7 @@ function SubmitButton({ loading, label }) {
 // ─── Main ─────────────────────────────────────────────────────────────────
 export default function Login_page() {
   const navigate = useNavigate();
+  const location = useLocation(); // 👈 Obtener location
   const { login } = useAuth();
 
   const [view, setView] = useState("login");
@@ -187,7 +188,9 @@ export default function Login_page() {
       const res = await authService.login({ email: loginEmail.value, password: loginPass.value });
       login(res.access_token, res.user, remember);
       toast.success(`¡Bienvenido, ${res.user.nombres ?? res.user.email}!`);
-      navigate("/");
+       // 👇 Redirigir a donde venía o a inicio
+      const from = location.state?.from || "/";
+      navigate(from, { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.message || "Credenciales incorrectas");
     } finally {
