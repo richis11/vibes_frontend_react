@@ -99,15 +99,17 @@ function InputField({ label, type = "text", field, placeholder, icon, toggleVisi
       <div style={{ position: "relative" }}>
         <input
           type={type === "password" && showPassword ? "text" : type}
-          {...field}
+          value={field.value}
+          onChange={field.onChange}
+          onBlur={(e) => { field.onBlur(); e.target.style.borderColor = field.error ? "#ef4444" : "rgba(0,180,230,0.2)"; }}
+          onFocus={(e) => e.target.style.borderColor = "#00b4e6"}
           placeholder={placeholder}
           style={{
-            width: "100%", padding: "12px 40px 12px 14px", border: field.touched && field.error ? "1.5px solid #ef4444" : "1.5px solid rgba(0,180,230,0.2)",
+            width: "100%", padding: "12px 40px 12px 14px", 
+            border: field.touched && field.error ? "1.5px solid #ef4444" : "1.5px solid rgba(0,180,230,0.2)",
             borderRadius: 10, fontSize: 14, outline: "none", transition: "border 0.2s",
             background: "#fafcfd", fontFamily: "'DM Sans', sans-serif"
           }}
-          onFocus={(e) => e.target.style.borderColor = "#00b4e6"}
-          onBlur={(e) => { field.onBlur(); e.target.style.borderColor = field.error ? "#ef4444" : "rgba(0,180,230,0.2)"; }}
         />
         {icon && (
           <button type="button" onClick={toggleVisibility} style={{

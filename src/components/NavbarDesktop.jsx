@@ -1,11 +1,12 @@
-// src/components/NavbarDesktop.jsx
 import { Link, useNavigate } from "react-router-dom";
 import { Nav, Navbar, Container, NavDropdown } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
+import { useLoginModal } from "../context/LoginModalContext"; // 👈 Importar
 import { toast } from "react-toastify";
 
 function NavbarDesktop() {
   const { user, isAdmin, isHost, isLoggedIn, logout } = useAuth();
+  const { openLoginModal } = useLoginModal(); // 👈 Usar hook
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -120,13 +121,13 @@ function NavbarDesktop() {
 
             {/* 👇 Botón de login - solo visible si NO está logueado */}
             {!isLoggedIn && (
-              <Nav.Link
-                as={Link}
-                to="/login"
+              <button
+                onClick={() => openLoginModal()} // 👈 Abrir modal en lugar de navegar
                 className="btn btn-outline-info btn-sm px-3"
+                
               >
                 Iniciar sesión
-              </Nav.Link>
+              </button>
             )}
           </Nav>
         </Navbar.Collapse>

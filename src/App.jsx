@@ -1,19 +1,20 @@
-// src/App.jsx
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "react-toastify/dist/ReactToastify.css";
 
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import { AuthProvider } from "./context/AuthContext";
+import { LoginModalProvider, useLoginModal } from "./context/LoginModalContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import NavbarDesktop from "./components/NavbarDesktop";
 import Chatbot from "./components/Chatbot";
+import Modal_login from "./components/Modal_login";
 
-import Login_page from "./pages/Login_page";
+//import Login_page from "./pages/Login_page";
 import Inicio_page from "./pages/Inicio_page";
 import Adm_users from "./pages/Adm_users";
 import Adm_casas from "./pages/Adm_casas";
@@ -31,6 +32,7 @@ import Perfil_page from "./pages/Perfil_page";
 function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
+  const { showLoginModal, closeLoginModal, handleLoginSuccess } = useLoginModal();
 
   return (
     <>
@@ -39,7 +41,7 @@ function AppLayout() {
 
       <Routes>
         {/* ========== RUTAS PÚBLICAS ========== */}
-        <Route path="/login" element={<Login_page />} />
+        <Route path="/login" element={<Navigate to="/" replace />} />
         
         {/* Inicio - Acceso público */}
         <Route path="/" element={<Inicio_page />} />
@@ -122,6 +124,13 @@ function AppLayout() {
       </Routes>
 
       {!hideNavbar && <Chatbot />}
+      
+      {/* Modal de login global */}
+      <Modal_login
+        show={showLoginModal}
+        onClose={closeLoginModal}
+        onSuccess={handleLoginSuccess}
+      />
     </>
   );
 }
@@ -129,7 +138,9 @@ function AppLayout() {
 export default function App() {
   return (
     <AuthProvider>
-      <AppLayout />
+      <LoginModalProvider>
+        <AppLayout />
+      </LoginModalProvider>
     </AuthProvider>
   );
 }

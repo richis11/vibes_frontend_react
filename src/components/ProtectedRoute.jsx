@@ -10,7 +10,7 @@ export default function ProtectedRoute({
   children,
   requireAuth = true,
   requireAdmin = false,
-  redirectTo = "/login",
+  redirectTo = "/",   // ← cambiado de "/login" a "/"
 }) {
   const { isLoggedIn, isAdmin, loading } = useAuth();
 

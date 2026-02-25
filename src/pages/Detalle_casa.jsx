@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext"; // 👈 Importar
+import { useLoginModal } from "../context/LoginModalContext"; // 👈 Importar
 import casasService from "../api/casas_service";
 import casaImagenesService from "../api/casa_imagenes_service";
 import Modal_reservar from "../components/Modal_reservar";
@@ -124,6 +125,7 @@ export default function Detalle_casa() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth(); // 👈 Usar hook de autenticación
+  const { openLoginModal } = useLoginModal(); // 👈 Usar hook
 
   const [casa, setCasa] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -160,15 +162,26 @@ export default function Detalle_casa() {
     fetchCasa();
   }, [id]);
 
-
-   const handleReservarClick = () => {
+const handleReservarClick = () => {
     if (!isLoggedIn) {
-      toast.info("Inicia sesión para reservar esta casa");
-      navigate("/login", { state: { from: `/casas/${id}` } }); // 👈 Guardar ruta de origen
+      // Abrir modal de login con callback para abrir modal de reserva
+      openLoginModal(() => {
+        toast.success("¡Ahora puedes hacer tu reserva!");
+        setShowModal(true);
+      });
       return;
     }
     setShowModal(true);
   };
+
+  //  const handleReservarClick = () => {
+  //   if (!isLoggedIn) {
+  //     toast.info("Inicia sesión para reservar esta casa");
+  //     navigate("/login", { state: { from: `/casas/${id}` } }); // 👈 Guardar ruta de origen
+  //     return;
+  //   }
+  //   setShowModal(true);
+  // };
 
   if (loading) return <PageSkeleton />;
   if (!casa) return null;
