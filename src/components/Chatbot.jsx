@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Card, Form, Button } from "react-bootstrap";
 import { useChat } from "../context/ChatContext";
+import logo from "../assets/vibes.png";
 
 function Chatbot() {
   const { messages, isLoading, sendMessage } = useChat();
-  
+
   const [input, setInput] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const chatBodyRef = useRef(null);
@@ -15,7 +16,7 @@ function Chatbot() {
   // Enviar mensaje
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
-    
+
     await sendMessage(input);
     setInput("");
   };
@@ -104,17 +105,27 @@ function Chatbot() {
                     width: 36,
                     height: 36,
                     borderRadius: "50%",
-                    background: "rgba(255,255,255,0.2)",
+                    background: "rgb(255, 255, 255)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     fontSize: 18,
                   }}
                 >
-                  🤖
+                  <img
+                    src={logo}
+                    alt="Logo del chat"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "50%",
+                    }}
+                  />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>Asistente Vibes</div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>
+                    Asistente Vibes
+                  </div>
                   <div style={{ fontSize: 11, opacity: 0.9 }}>
                     {isLoading ? "Escribiendo..." : "En línea"}
                   </div>
@@ -173,8 +184,10 @@ function Chatbot() {
                       ref={isLastBotMessage ? lastBotMessageRef : null}
                       className="shadow-sm"
                       style={{
-                        alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
-                        backgroundColor: msg.sender === "user" ? "#0090c8" : "#fff",
+                        alignSelf:
+                          msg.sender === "user" ? "flex-end" : "flex-start",
+                        backgroundColor:
+                          msg.sender === "user" ? "#0090c8" : "#fff",
                         color: msg.sender === "user" ? "#fff" : "#212529",
                         padding: "10px 14px",
                         borderRadius: 12,
@@ -193,7 +206,7 @@ function Chatbot() {
                   );
                 })
               )}
-              
+
               {/* Indicador de carga */}
               {isLoading && (
                 <div
@@ -268,7 +281,8 @@ function Chatbot() {
                     style={{
                       borderRadius: 10,
                       padding: "8px 20px",
-                      background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
+                      background:
+                        "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
                       border: "none",
                       fontWeight: 600,
                     }}

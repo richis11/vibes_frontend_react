@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Form, Button } from "react-bootstrap";
 import { useChat } from "../context/ChatContext";
+import logo from "../assets/vibes.png";
 
 export default function ChatFullscreen() {
   const { messages, isLoading, sendMessage } = useChat();
-  
+
   const [input, setInput] = useState("");
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
@@ -28,7 +29,7 @@ export default function ChatFullscreen() {
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
-    
+
     await sendMessage(input);
     setInput("");
   };
@@ -59,7 +60,15 @@ export default function ChatFullscreen() {
           boxShadow: "0 2px 8px rgba(0,140,200,0.08)",
         }}
       >
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", alignItems: "center", gap: 12 }}>
+        <div
+          style={{
+            maxWidth: 900,
+            margin: "0 auto",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
           <div
             style={{
               width: 40,
@@ -109,10 +118,10 @@ export default function ChatFullscreen() {
             >
               <div
                 style={{
-                  width: 100,
-                  height: 100,
+                  width: 150,
+                  height: 150,
                   borderRadius: "50%",
-                  background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
+                  //background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -121,7 +130,11 @@ export default function ChatFullscreen() {
                   boxShadow: "0 8px 32px rgba(0,180,230,0.3)",
                 }}
               >
-                👋
+                <img
+                  src={logo}
+                  alt="Logo del chat"
+                  style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                />
               </div>
               <h2
                 style={{
@@ -134,9 +147,17 @@ export default function ChatFullscreen() {
               >
                 ¡Bienvenido a Vibes!
               </h2>
-              <p style={{ fontSize: 16, color: "#5aabb8", maxWidth: 500, margin: "0 auto 24px" }}>
-                Soy tu asistente virtual. Puedo ayudarte a buscar casas, responder preguntas sobre
-                reservas, o cualquier otra cosa que necesites.
+              <p
+                style={{
+                  fontSize: 16,
+                  color: "#5aabb8",
+                  maxWidth: 500,
+                  margin: "0 auto 24px",
+                }}
+              >
+                Soy tu asistente virtual. Puedo ayudarte a buscar casas,
+                responder preguntas sobre reservas, o cualquier otra cosa que
+                necesites.
               </p>
               <div
                 style={{
@@ -170,14 +191,17 @@ export default function ChatFullscreen() {
                     }}
                     onMouseEnter={(e) => {
                       e.target.style.borderColor = "#00b4e6";
-                      e.target.style.boxShadow = "0 4px 16px rgba(0,180,230,0.15)";
+                      e.target.style.boxShadow =
+                        "0 4px 16px rgba(0,180,230,0.15)";
                     }}
                     onMouseLeave={(e) => {
                       e.target.style.borderColor = "rgba(0,180,230,0.2)";
                       e.target.style.boxShadow = "none";
                     }}
                   >
-                    <span style={{ fontSize: 20, marginRight: 8 }}>{suggestion.icon}</span>
+                    <span style={{ fontSize: 20, marginRight: 8 }}>
+                      {suggestion.icon}
+                    </span>
                     {suggestion.text}
                   </button>
                 ))}
@@ -191,7 +215,8 @@ export default function ChatFullscreen() {
                   key={index}
                   style={{
                     display: "flex",
-                    justifyContent: msg.sender === "user" ? "flex-end" : "flex-start",
+                    justifyContent:
+                      msg.sender === "user" ? "flex-end" : "flex-start",
                     marginBottom: 16,
                   }}
                 >
@@ -200,7 +225,8 @@ export default function ChatFullscreen() {
                       display: "flex",
                       gap: 12,
                       maxWidth: "75%",
-                      flexDirection: msg.sender === "user" ? "row-reverse" : "row",
+                      flexDirection:
+                        msg.sender === "user" ? "row-reverse" : "row",
                     }}
                   >
                     {/* Avatar */}
@@ -213,7 +239,10 @@ export default function ChatFullscreen() {
                           msg.sender === "user"
                             ? "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)"
                             : "#fff",
-                        border: msg.sender === "bot" ? "2px solid rgba(0,180,230,0.2)" : "none",
+                        border:
+                          msg.sender === "bot"
+                            ? "2px solid rgba(0,180,230,0.2)"
+                            : "none",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -221,7 +250,19 @@ export default function ChatFullscreen() {
                         flexShrink: 0,
                       }}
                     >
-                      {msg.sender === "user" ? "👤" : "🤖"}
+                      {msg.sender === "user" ? (
+                        "👤"
+                      ) : (
+                        <img
+                          src={logo}
+                          alt="Logo del chat"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      )}
                     </div>
 
                     {/* Message bubble */}
@@ -263,7 +304,15 @@ export default function ChatFullscreen() {
                       fontSize: 18,
                     }}
                   >
-                    🤖
+                    <img
+                          src={logo}
+                          alt="Logo del chat"
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "50%",
+                          }}
+                        />
                   </div>
                   <div
                     style={{
@@ -350,7 +399,9 @@ export default function ChatFullscreen() {
                     transition: "border 0.2s",
                   }}
                   onFocus={(e) => (e.target.style.borderColor = "#00b4e6")}
-                  onBlur={(e) => (e.target.style.borderColor = "rgba(0,180,230,0.25)")}
+                  onBlur={(e) =>
+                    (e.target.style.borderColor = "rgba(0,180,230,0.25)")
+                  }
                 />
               </div>
               <Button
@@ -359,15 +410,20 @@ export default function ChatFullscreen() {
                 style={{
                   padding: "14px 24px",
                   borderRadius: 12,
-                  background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
+                  background:
+                    "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
                   border: "none",
                   fontWeight: 700,
                   fontSize: 15,
                   minWidth: 100,
                   transition: "transform 0.2s",
                 }}
-                onMouseEnter={(e) => !isLoading && (e.target.style.transform = "translateY(-2px)")}
-                onMouseLeave={(e) => (e.target.style.transform = "translateY(0)")}
+                onMouseEnter={(e) =>
+                  !isLoading && (e.target.style.transform = "translateY(-2px)")
+                }
+                onMouseLeave={(e) =>
+                  (e.target.style.transform = "translateY(0)")
+                }
               >
                 {isLoading ? "Enviando..." : "Enviar"}
               </Button>
