@@ -25,11 +25,21 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Solo redirigir a login si es un 401 Y NO es de los endpoints de autenticación
     if (error.response?.status === 401) {
-      // Token inválido o expirado - limpiar sesión
+      const url = error.config?.url || '';
+      const isAuthEndpoint = url.includes('/login') || url.includes('/register');
+      
+      // Si el 401 es de login/register, no hacer nada (dejar que el componente maneje el error)
+      if (isAuthEndpoint) {
+        return Promise.reject(error);
+      }
+      
+      // Si el 401 es de cualquier otro endpoint, significa que el token expiró
+      // Limpiar sesión y redirigir al inicio (no a /login porque ahora usamos modal)
       tokenStorage.clear();
       localStorage.removeItem("user");
-      window.location.href = "/login";
+      window.location.href = "/";
     }
     return Promise.reject(error);
   }
