@@ -8,13 +8,13 @@ import { ToastContainer } from "react-toastify";
 
 import { AuthProvider } from "./context/AuthContext";
 import { LoginModalProvider, useLoginModal } from "./context/LoginModalContext";
+import { ChatProvider } from "./context/ChatContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import NavbarDesktop from "./components/NavbarDesktop";
 import Chatbot from "./components/Chatbot";
 import Modal_login from "./components/Modal_login";
 
-//import Login_page from "./pages/Login_page";
 import Inicio_page from "./pages/Inicio_page";
 import Adm_users from "./pages/Adm_users";
 import Adm_casas from "./pages/Adm_casas";
@@ -32,6 +32,7 @@ import Perfil_page from "./pages/Perfil_page";
 function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
+  const hideChatbot = location.pathname === "/"; // No mostrar chatbot flotante en inicio
   const { showLoginModal, closeLoginModal, handleLoginSuccess } = useLoginModal();
 
   return (
@@ -43,13 +44,13 @@ function AppLayout() {
         {/* ========== RUTAS PÚBLICAS ========== */}
         <Route path="/login" element={<Navigate to="/" replace />} />
         
-        {/* Inicio - Acceso público */}
+        {/* Inicio - Chat fullscreen */}
         <Route path="/" element={<Inicio_page />} />
 
         {/* Vitrina de casas - Acceso público */}
         <Route path="/casas" element={<Vitrina_casas />} />
 
-        {/* Detalle de casa - Acceso público (pero reservar requiere login) */}
+        {/* Detalle de casa - Acceso público */}
         <Route path="/casas/:id" element={<Detalle_casa />} />
 
         {/* ========== RUTAS PROTEGIDAS (Usuario logueado) ========== */}
@@ -123,7 +124,8 @@ function AppLayout() {
         />
       </Routes>
 
-      {!hideNavbar && <Chatbot />}
+      {/* Chatbot flotante - solo visible fuera de la página de inicio */}
+      {!hideNavbar && !hideChatbot && <Chatbot />}
       
       {/* Modal de login global */}
       <Modal_login
@@ -139,7 +141,9 @@ export default function App() {
   return (
     <AuthProvider>
       <LoginModalProvider>
-        <AppLayout />
+        <ChatProvider>
+          <AppLayout />
+        </ChatProvider>
       </LoginModalProvider>
     </AuthProvider>
   );
