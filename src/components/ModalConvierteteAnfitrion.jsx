@@ -2,11 +2,13 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import hostsService from "../api/hosts_service";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function ModalConvierteAnfitrion({ show, onClose }) {
-  const { user, login } = useAuth();
+  const { user, login, token } = useAuth();
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
   const handleConvertirse = async () => {
     if (!aceptaTerminos) {
@@ -16,27 +18,25 @@ export default function ModalConvierteAnfitrion({ show, onClose }) {
 
     setLoading(true);
     try {
-      // Crear perfil de host
       const response = await hostsService.crearHost({
         persona_id: user.persona_id,
-        verificado: false, // Por defecto no verificado
-        calificacion_promedio: 0,
-        total_resenas: 0,
+        verificado: false,
       });
 
-      // Actualizar el usuario en el contexto con el host_id
+      // Actualizar contexto correctamente sin reload
       const updatedUser = {
         ...user,
-        host_id: response.data.id,
+        host_id: response.data.host_id,
       };
 
-      // Actualizar localStorage y contexto
-      localStorage.setItem("user", JSON.stringify(updatedUser));
-      
-      // Forzar actualización del contexto
-      window.location.reload(); // Temporal, mejor sería actualizar el contexto directamente
+      login(token, updatedUser); // Actualiza localStorage + estado React
+
 
       toast.success("¡Felicidades! Ahora eres anfitrión de Vibes 🎉");
+
+
+      navigate("/mi-panel"); // Redirigir a panel de anfitrión
+      
       onClose();
     } catch (err) {
       console.error(err);
@@ -48,6 +48,7 @@ export default function ModalConvierteAnfitrion({ show, onClose }) {
       setLoading(false);
     }
   };
+
 
   if (!show) return null;
 
