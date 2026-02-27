@@ -330,6 +330,9 @@ export default function Reservas_anfitrion() {
       try {
         // Obtener todas las reservas y filtrar las de las casas del host
         const todasReservas = await reservasService.getReservasPorHost(user.host_id);
+
+        console.log('DATOS RECIBIDOS PARA RESERVAS HOST')
+              console.log(todasReservas)
         
         
         // TODO: Aquí necesitarías un endpoint específico en el backend
@@ -343,6 +346,7 @@ export default function Reservas_anfitrion() {
               const imagenes = await casaImagenesService.getImagenesPorCasa(
                 reserva.casa_id
               );
+              
               const principal =
                 imagenes.find((img) => img.es_principal) ?? imagenes[0];
               return { ...reserva, imagen_principal: principal?.url ?? null };
