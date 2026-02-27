@@ -1,21 +1,34 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Nav, Navbar, Container, NavDropdown } from "react-bootstrap";
+import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useLoginModal } from "../context/LoginModalContext";
 import { useMode, MODES } from "../context/ModeContext";
 import { toast } from "react-toastify";
 import ModeToggle from "./ModeToggle";
+import BotonHazteAnfitrion from "./BotonHazteAnfitrion";
+import ModalConvierteAnfitrion from "./ModalConvierteteAnfitrion";
 
 function NavbarDesktop() {
   const { user, isAdmin, isHost, isLoggedIn, logout } = useAuth();
   const { openLoginModal } = useLoginModal();
   const { isGuestMode, isHostMode } = useMode();
   const navigate = useNavigate();
+  const [showModalAnfitrion, setShowModalAnfitrion] = useState(false);
 
   const handleLogout = () => {
     logout();
     toast.info("Sesión cerrada");
     navigate("/");
+  };
+
+  const handleOpenModalAnfitrion = () => {
+    if (!isLoggedIn) {
+      toast.info("Inicia sesión para convertirte en anfitrión");
+      openLoginModal();
+      return;
+    }
+    setShowModalAnfitrion(true);
   };
 
   return (
@@ -31,20 +44,20 @@ function NavbarDesktop() {
         <Navbar.Collapse id="basic-navbar-nav">
           {/* Opciones Centro */}
           <Nav className="mx-auto align-items-lg-center gap-3">
-            {/* ========== OPCIONES MODO CLIENTE ========== */}
+            {/* ========== CASAS (siempre visible) ========== */}
+            <Nav.Link as={Link} to="/casas">
+              Casas
+            </Nav.Link>
+
+            {/* ========== OPCIONES MODO CLIENTE (solo si está logueado) ========== */}
             {isLoggedIn && isGuestMode && (
-              <>
-                <Nav.Link as={Link} to="/casas">
-                  Casas
-                </Nav.Link>
-                <Nav.Link as={Link} to="/mis_reservas">
-                  <i className="bi bi-calendar-check me-2" />
-                  Mis Reservas
-                </Nav.Link>
-              </>
+              <Nav.Link as={Link} to="/mis_reservas">
+                <i className="bi bi-calendar-check me-2" />
+                Mis Reservas
+              </Nav.Link>
             )}
 
-            {/* ========== OPCIONES MODO ANFITRIÓN ========== */}
+            {/* ========== OPCIONES MODO ANFITRIÓN (solo si es host) ========== */}
             {isLoggedIn && isHostMode && isHost && (
               <>
                 <Nav.Link as={Link} to="/mi-panel">
@@ -57,19 +70,17 @@ function NavbarDesktop() {
                 </Nav.Link>
               </>
             )}
-
-            {/* ========== OPCIONES USUARIO NO LOGUEADO ========== */}
-            {!isLoggedIn && (
-              <Nav.Link as={Link} to="/casas">
-                Casas
-              </Nav.Link>
-            )}
           </Nav>
 
           {/* Opciones Derecha */}
           <Nav className="align-items-lg-center gap-2">
             {/* ========== TOGGLE DE MODO (solo si es host y está logueado) ========== */}
             {isLoggedIn && isHost && <ModeToggle />}
+
+            {/* ========== BOTÓN HAZTE ANFITRIÓN (solo si NO es host y está logueado) ========== */}
+            {isLoggedIn && !isHost && (
+              <BotonHazteAnfitrion onOpenModal={handleOpenModalAnfitrion} />
+            )}
 
             {/* ========== MENÚ ADMIN ========== */}
             {isLoggedIn && isAdmin && (
@@ -153,6 +164,12 @@ function NavbarDesktop() {
           </Nav>
         </Navbar.Collapse>
       </Container>
+      
+      {/* Modal Conviértete en Anfitrión */}
+      <ModalConvierteAnfitrion
+        show={showModalAnfitrion}
+        onClose={() => setShowModalAnfitrion(false)}
+      />
     </Navbar>
   );
 }
