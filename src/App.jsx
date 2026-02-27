@@ -9,7 +9,10 @@ import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "./context/AuthContext";
 import { LoginModalProvider, useLoginModal } from "./context/LoginModalContext";
 import { ChatProvider } from "./context/ChatContext";
+import { ModeProvider, MODES } from "./context/ModeContext";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+import ModeProtectedRoute from "./components/ModeProtectedRoute";
 
 import NavbarDesktop from "./components/NavbarDesktop";
 import Chatbot from "./components/Chatbot";
@@ -27,6 +30,7 @@ import Detalle_casa from "./pages/Detalle_casa";
 
 import Mis_reservas from "./pages/Mis_reservas";
 import Panel_host from "./pages/Panel_host";
+import Reservas_anfitrion from "./pages/Reservas_anfitrion";
 import Perfil_page from "./pages/Perfil_page";
 
 function AppLayout() {
@@ -47,31 +51,48 @@ function AppLayout() {
         {/* Inicio - Chat fullscreen */}
         <Route path="/" element={<Inicio_page />} />
 
-        {/* Vitrina de casas - Acceso público */}
+        {/* Casas - Acceso público */}
         <Route path="/casas" element={<Vitrina_casas />} />
 
         {/* Detalle de casa - Acceso público */}
         <Route path="/casas/:id" element={<Detalle_casa />} />
 
-        {/* ========== RUTAS PROTEGIDAS (Usuario logueado) ========== */}
+        {/* ========== RUTAS MODO CLIENTE (requieren login Y modo GUEST) ========== */}
         <Route
           path="/mis_reservas"
           element={
             <ProtectedRoute>
-              <Mis_reservas />
+              <ModeProtectedRoute requiredMode={MODES.GUEST}>
+                <Mis_reservas />
+              </ModeProtectedRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ========== RUTAS MODO ANFITRIÓN (requieren login Y modo HOST) ========== */}
+        <Route
+          path="/mi-panel"
+          element={
+            <ProtectedRoute>
+              <ModeProtectedRoute requiredMode={MODES.HOST}>
+                <Panel_host />
+              </ModeProtectedRoute>
             </ProtectedRoute>
           }
         />
 
         <Route
-          path="/mi-panel"
+          path="/reservas-anfitrion"
           element={
             <ProtectedRoute>
-              <Panel_host />
+              <ModeProtectedRoute requiredMode={MODES.HOST}>
+                <Reservas_anfitrion />
+              </ModeProtectedRoute>
             </ProtectedRoute>
           }
         />
 
+        {/* ========== RUTA DE PERFIL (ambos modos) ========== */}
         <Route
           path="/perfil"
           element={
@@ -81,7 +102,7 @@ function AppLayout() {
           }
         />
 
-        {/* ========== RUTAS ADMIN ========== */}
+        {/* ========== RUTAS ADMIN (ambos modos) ========== */}
         <Route
           path="/adm_users"
           element={
@@ -142,7 +163,9 @@ export default function App() {
     <AuthProvider>
       <LoginModalProvider>
         <ChatProvider>
-          <AppLayout />
+          <ModeProvider>
+            <AppLayout />
+          </ModeProvider>
         </ChatProvider>
       </LoginModalProvider>
     </AuthProvider>
