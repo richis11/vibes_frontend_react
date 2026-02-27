@@ -45,9 +45,10 @@ function NavbarDesktop() {
           {/* Opciones Centro */}
           <Nav className="mx-auto align-items-lg-center gap-3">
             {/* ========== CASAS (siempre visible) ========== */}
-            <Nav.Link as={Link} to="/casas">
+            {!isHostMode&&(<Nav.Link as={Link} to="/casas">
               Casas
-            </Nav.Link>
+            </Nav.Link>)}
+            
 
             {/* ========== OPCIONES MODO CLIENTE (solo si está logueado) ========== */}
             {isLoggedIn && isGuestMode && (

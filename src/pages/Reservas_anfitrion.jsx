@@ -329,7 +329,8 @@ export default function Reservas_anfitrion() {
 
       try {
         // Obtener todas las reservas y filtrar las de las casas del host
-        const todasReservas = await reservasService.getReservas();
+        const todasReservas = await reservasService.getReservasPorHost(user.host_id);
+        
         
         // TODO: Aquí necesitarías un endpoint específico en el backend
         // Por ahora, filtramos manualmente (no es óptimo en producción)
