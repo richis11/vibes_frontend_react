@@ -50,7 +50,7 @@ function Adm_casas() {
   if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <>
+    <div style={{paddingTop:"50px"}}>
       <br />
 
       <div className="d-flex justify-content-between align-items-center mb-3">
@@ -159,7 +159,7 @@ function Adm_casas() {
         }}
         casa={casaImagenes}
       />
-    </>
+    </div>
   );
 }
 

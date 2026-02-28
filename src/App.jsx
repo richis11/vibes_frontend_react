@@ -37,6 +37,7 @@ function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
   const hideChatbot = location.pathname === "/"; // No mostrar chatbot flotante en inicio
+  const isInicio = location.pathname === "/";    // La página de inicio maneja su propio layout
   const { showLoginModal, closeLoginModal, handleLoginSuccess } = useLoginModal();
 
   return (
@@ -44,110 +45,118 @@ function AppLayout() {
       <ToastContainer />
       {!hideNavbar && <NavbarDesktop />}
 
-      <Routes>
-        {/* ========== RUTAS PÚBLICAS ========== */}
-        <Route path="/login" element={<Navigate to="/" replace />} />
-        
-        {/* Inicio - Chat fullscreen */}
-        <Route path="/" element={<Inicio_page />} />
+      {/*
+        Cuando el navbar está visible y NO es la página de inicio,
+        agregamos paddingTop para que el contenido quede debajo del navbar fijo.
+        El navbar de Bootstrap con fixed="top" mide ~64px.
+        La página de inicio (ChatFullscreen) maneja su propio height: 100vh internamente.
+      */}
+      <main>
+        <Routes>
+          {/* ========== RUTAS PÚBLICAS ========== */}
+          <Route path="/login" element={<Navigate to="/" replace />} />
 
-        {/* Casas - Acceso público */}
-        <Route path="/casas" element={<Vitrina_casas />} />
+          {/* Inicio - Chat fullscreen */}
+          <Route path="/" element={<Inicio_page />} />
 
-        {/* Detalle de casa - Acceso público */}
-        <Route path="/casas/:id" element={<Detalle_casa />} />
+          {/* Casas - Acceso público */}
+          <Route path="/casas" element={<Vitrina_casas />} />
 
-        {/* ========== RUTAS MODO CLIENTE (requieren login Y modo GUEST) ========== */}
-        <Route
-          path="/mis_reservas"
-          element={
-            <ProtectedRoute>
-              <ModeProtectedRoute requiredMode={MODES.GUEST}>
-                <Mis_reservas />
-              </ModeProtectedRoute>
-            </ProtectedRoute>
-          }
-        />
+          {/* Detalle de casa - Acceso público */}
+          <Route path="/casas/:id" element={<Detalle_casa />} />
 
-        {/* ========== RUTAS MODO ANFITRIÓN (requieren login Y modo HOST) ========== */}
-        <Route
-          path="/mi-panel"
-          element={
-            <ProtectedRoute>
-              <ModeProtectedRoute requiredMode={MODES.HOST}>
-                <Panel_host />
-              </ModeProtectedRoute>
-            </ProtectedRoute>
-          }
-        />
+          {/* ========== RUTAS MODO CLIENTE (requieren login Y modo GUEST) ========== */}
+          <Route
+            path="/mis_reservas"
+            element={
+              <ProtectedRoute>
+                <ModeProtectedRoute requiredMode={MODES.GUEST}>
+                  <Mis_reservas />
+                </ModeProtectedRoute>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/reservas-anfitrion"
-          element={
-            <ProtectedRoute>
-              <ModeProtectedRoute requiredMode={MODES.HOST}>
-                <Reservas_anfitrion />
-              </ModeProtectedRoute>
-            </ProtectedRoute>
-          }
-        />
+          {/* ========== RUTAS MODO ANFITRIÓN (requieren login Y modo HOST) ========== */}
+          <Route
+            path="/mi-panel"
+            element={
+              <ProtectedRoute>
+                <ModeProtectedRoute requiredMode={MODES.HOST}>
+                  <Panel_host />
+                </ModeProtectedRoute>
+              </ProtectedRoute>
+            }
+          />
 
-        {/* ========== RUTA DE PERFIL (ambos modos) ========== */}
-        <Route
-          path="/perfil"
-          element={
-            <ProtectedRoute>
-              <Perfil_page />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/reservas-anfitrion"
+            element={
+              <ProtectedRoute>
+                <ModeProtectedRoute requiredMode={MODES.HOST}>
+                  <Reservas_anfitrion />
+                </ModeProtectedRoute>
+              </ProtectedRoute>
+            }
+          />
 
-        {/* ========== RUTAS ADMIN (ambos modos) ========== */}
-        <Route
-          path="/adm_users"
-          element={
-            <ProtectedRoute requireAdmin>
-              <Adm_users />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/adm_clientes"
-          element={
-            <ProtectedRoute requireAdmin>
-              <Adm_personas />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/adm_hosts"
-          element={
-            <ProtectedRoute requireAdmin>
-              <Adm_hosts />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/adm_casas"
-          element={
-            <ProtectedRoute requireAdmin>
-              <Adm_casas />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/adm_reservas"
-          element={
-            <ProtectedRoute requireAdmin>
-              <Adm_reservas />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+          {/* ========== RUTA DE PERFIL (ambos modos) ========== */}
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRoute>
+                <Perfil_page />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* ========== RUTAS ADMIN (ambos modos) ========== */}
+          <Route
+            path="/adm_users"
+            element={
+              <ProtectedRoute requireAdmin>
+                <Adm_users />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adm_clientes"
+            element={
+              <ProtectedRoute requireAdmin>
+                <Adm_personas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adm_hosts"
+            element={
+              <ProtectedRoute requireAdmin>
+                <Adm_hosts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adm_casas"
+            element={
+              <ProtectedRoute requireAdmin>
+                <Adm_casas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adm_reservas"
+            element={
+              <ProtectedRoute requireAdmin>
+                <Adm_reservas />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
 
       {/* Chatbot flotante - solo visible fuera de la página de inicio */}
       {!hideNavbar && !hideChatbot && <Chatbot />}
-      
+
       {/* Modal de login global */}
       <Modal_login
         show={showLoginModal}

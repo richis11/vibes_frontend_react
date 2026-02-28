@@ -39,7 +39,7 @@ function Adm_users() {
   if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <>
+    <div style={{paddingTop:"50px"}}>
       <br />
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2>Administración de Usuarios</h2>
@@ -120,7 +120,7 @@ function Adm_users() {
         handleClose={() => setShowModal(false)}
         onSuccess={refetch}
       />
-    </>
+    </div>
   );
 }
 

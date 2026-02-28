@@ -148,6 +148,8 @@ export default function ChatFullscreen() {
         display: "flex",
         flexDirection: "column",
         height: "100vh",
+        //height: "var(--page-h)",
+        paddingTop:"55px",
         background: "linear-gradient(180deg, #edfaff 0%, #f5feff 100%)",
         fontFamily: "'DM Sans', sans-serif",
       }}
@@ -165,11 +167,11 @@ export default function ChatFullscreen() {
           <div
             style={{
               width: 40, height: 40, borderRadius: "50%",
-              background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
+              //background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
               display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20,
             }}
           >
-            🤖
+            <img src={logo} alt="Logo" style={{ width: "100%", height: "100%", borderRadius: "50%" }} />
           </div>
           <div>
             <div style={{ fontWeight: 700, fontSize: 16, color: "#002d44" }}>Asistente Vibes</div>
