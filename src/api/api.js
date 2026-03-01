@@ -3,8 +3,8 @@ import axios from "axios";
 import { tokenStorage } from "../utils/tokenStorage";
 
 const api = axios.create({
-  //baseURL: "https://vibesbackendnestjs-production.up.railway.app",
-   baseURL: "http://localhost:3000", // Para desarrollo local
+  baseURL: "https://vibesbackendnestjs-production.up.railway.app",
+   //baseURL: "http://localhost:3000", // Para desarrollo local
 });
 
 // 👇 Interceptor para agregar el token automáticamente

@@ -71,7 +71,7 @@ function Modal_reservas({ show, modo, reserva, handleClose, onSuccess }) {
     if (casaSeleccionada) {
       setForm((prev) => ({
         ...prev,
-        precio_por_noche: Number(casaSeleccionada.precio), // 🔥 CORRECTO
+        precio_por_noche: Number(casaSeleccionada.precio),
       }));
     }
   }, [form.casa_id, casas]);
@@ -191,7 +191,7 @@ function Modal_reservas({ show, modo, reserva, handleClose, onSuccess }) {
               )}
               {usuarios.map((user) => (
                 <option key={user.id} value={user.id}>
-                  {user.nombre} 
+                  {user.nombres} {user.apellidos}
                 </option>
               ))}
             </Form.Select>
@@ -225,24 +225,108 @@ function Modal_reservas({ show, modo, reserva, handleClose, onSuccess }) {
             </Col>
           </Row>
 
+          {/* ESTADO */}
+          <Form.Group className="mb-3">
+            <Form.Label>Estado</Form.Label>
+            <Form.Select
+              name="estado"
+              value={form.estado}
+              onChange={handleChange}
+            >
+              <option value="pendiente_pago">Pendiente de pago</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="completada">Completada</option>
+              <option value="cancelada">Cancelada</option>
+              <option value="reembolsada">Reembolsada</option>
+            </Form.Select>
+          </Form.Group>
+
+          {/* MONEDA */}
+          <Form.Group className="mb-3">
+            <Form.Label>Moneda</Form.Label>
+            <Form.Select
+              name="moneda"
+              value={form.moneda}
+              onChange={handleChange}
+            >
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+            </Form.Select>
+          </Form.Group>
+
           <hr />
 
-          <p>
-            <strong>Noches:</strong> {form.noches}
+          {/* CAMPOS CALCULADOS (solo lectura) */}
+          <p className="text-muted mb-2" style={{ fontSize: 13 }}>
+            <em>Los siguientes valores se calculan automáticamente según la casa y las fechas:</em>
           </p>
-          <p>
-            <strong>Precio por noche:</strong> ${form.precio_por_noche}
-          </p>
-          <p>
-            <strong>Subtotal:</strong> ${Number(form.subtotal).toFixed(2)}
-          </p>
-          <p>
-            <strong>Comisión (10%):</strong> $
-            {Number(form.comision_plataforma).toFixed(2)}
-          </p>
-          <p>
-            <strong>Total:</strong> ${Number(form.total).toFixed(2)}
-          </p>
+
+          <Row>
+            <Col sm={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Noches</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={form.noches}
+                  readOnly
+                  style={{ background: "#f8f9fa", color: "#6c757d" }}
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={6}>
+              <Form.Group className="mb-3">
+                <Form.Label>Precio por noche ($)</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={form.precio_por_noche}
+                  readOnly
+                  style={{ background: "#f8f9fa", color: "#6c757d" }}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col sm={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Subtotal ($)</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={Number(form.subtotal).toFixed(2)}
+                  readOnly
+                  style={{ background: "#f8f9fa", color: "#6c757d" }}
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Comisión 10% ($)</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={Number(form.comision_plataforma).toFixed(2)}
+                  readOnly
+                  style={{ background: "#f8f9fa", color: "#6c757d" }}
+                />
+              </Form.Group>
+            </Col>
+            <Col sm={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  <strong>Total ($)</strong>
+                </Form.Label>
+                <Form.Control
+                  type="number"
+                  value={Number(form.total).toFixed(2)}
+                  readOnly
+                  style={{
+                    background: "#e8f6ff",
+                    color: "#0090c8",
+                    fontWeight: 700,
+                  }}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
         </Modal.Body>
 
         <Modal.Footer>
