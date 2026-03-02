@@ -5,6 +5,7 @@ import casasService from "../api/casas_service";
 import { useAuth } from "../context/AuthContext";
 import Modal_casa_host from "../components/Modal_casa_host";
 import casaImagenesService from "../api/casa_imagenes_service";
+import Modal_imagenes from "../components/Modal_imagenes";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80";
@@ -56,7 +57,7 @@ function Chip({ cfg }) {
 }
 
 // ─── Tarjeta de casa ──────────────────────────────────────────────────────
-function CasaHostCard({ casa, onEditar }) {
+function CasaHostCard({ casa, onEditar, onImagenes }) {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -100,7 +101,11 @@ function CasaHostCard({ casa, onEditar }) {
         }}
       >
         <img
-          src={imgError ? IMAGEN_GENERICA : casa.imagen_principal || IMAGEN_GENERICA}
+          src={
+            imgError
+              ? IMAGEN_GENERICA
+              : casa.imagen_principal || IMAGEN_GENERICA
+          }
           alt={casa.nombre}
           onError={() => setImgError(true)}
           style={{
@@ -238,6 +243,7 @@ function CasaHostCard({ casa, onEditar }) {
           >
             Ver
           </button>
+
           <button
             onClick={() => onEditar(casa)}
             style={{
@@ -255,7 +261,27 @@ function CasaHostCard({ casa, onEditar }) {
               boxShadow: "0 3px 12px rgba(0,180,230,0.3)",
             }}
           >
-            ✏️ Editar
+            Editar
+          </button>
+
+          <button
+            onClick={() => onImagenes(casa)}
+            style={{
+              flex: 2,
+              padding: "9px 0",
+              borderRadius: 10,
+              border: "none",
+              background: "linear-gradient(135deg, #00c6f0, #0090c8)",
+              color: "#fff",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: "pointer",
+              transition: "all 0.18s",
+              fontFamily: "inherit",
+              boxShadow: "0 3px 12px rgba(0,180,230,0.3)",
+            }}
+          >
+            Imágenes
           </button>
         </div>
       </div>
@@ -357,6 +383,9 @@ export default function Panel_host() {
   const [casaEditando, setCasaEditando] = useState(null);
   const [filtro, setFiltro] = useState("todas");
 
+  const [showImagenes, setShowImagenes] = useState(false);
+  const [casaImagenes, setCasaImagenes] = useState(null);
+
   const fetchCasas = async () => {
     if (!user?.host_id) {
       setLoading(false);
@@ -410,6 +439,29 @@ export default function Panel_host() {
   const handleClose = () => {
     setShowModal(false);
     setCasaEditando(null);
+  };
+
+  const handleImagenes = (casa) => {
+    setCasaImagenes(casa);
+    setShowImagenes(true);
+  };
+  const handleCloseImagenes = () => {
+    setShowImagenes(false);
+    setCasaImagenes(null);
+  };
+
+  const handleImagenChange = async (casaId) => {
+    try {
+      const imagenes = await casaImagenesService.getImagenesPorCasa(casaId);
+      const principal = imagenes.find((img) => img.es_principal) ?? imagenes[0];
+      setCasas((prev) =>
+        prev.map((c) =>
+          c.id === casaId
+            ? { ...c, imagen_principal: principal?.url ?? null }
+            : c,
+        ),
+      );
+    } catch {}
   };
 
   // Stats
@@ -673,7 +725,11 @@ export default function Panel_host() {
                       className="card-wrapper"
                       style={{ animationDelay: `${i * 0.07}s` }}
                     >
-                      <CasaHostCard casa={casa} onEditar={handleEditar} />
+                      <CasaHostCard
+                        casa={casa}
+                        onEditar={handleEditar}
+                        onImagenes={handleImagenes}
+                      />
                     </div>
                   ))
                 ) : (
@@ -770,6 +826,13 @@ export default function Panel_host() {
         casa={casaEditando}
         hostId={user?.host_id}
         onSuccess={fetchCasas}
+      />
+
+      <Modal_imagenes
+        show={showImagenes}
+        onClose={handleCloseImagenes}
+        casa={casaImagenes}
+        onImagenChange={handleImagenChange}
       />
     </>
   );

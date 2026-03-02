@@ -97,6 +97,26 @@ function CasaCard({ casa }) {
             transition: "transform 0.4s cubic-bezier(.22,1,.36,1)",
           }}
         />
+
+        {/* Overlay precio */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: 12,
+            right: 12,
+            background: "rgba(0,20,40,0.72)",
+            backdropFilter: "blur(6px)",
+            borderRadius: 10,
+            padding: "6px 12px",
+            color: "#fff",
+          }}
+        >
+          <span style={{ fontSize: 11, opacity: 0.75 }}>desde </span>
+          <span style={{ fontSize: 17, fontWeight: 800 }}>
+            ${parseFloat(casa.precio).toFixed(0)}
+          </span>
+          <span style={{ fontSize: 11, opacity: 0.75 }}> /noche</span>
+        </div>
         <div style={{ position: "absolute", top: 12, left: 12 }}>
           <BadgeDisp disponibilidad={casa.disponibilidad} />
         </div>
@@ -124,17 +144,27 @@ function CasaCard({ casa }) {
           {casa.nombre}
         </h3>
 
-        <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+        {/* <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
           <span style={{ fontSize: 20, fontWeight: 800, color: "#0090c8" }}>
             ${parseFloat(casa.precio).toFixed(2)}
           </span>
           <span style={{ fontSize: 13, color: "#8bb8c8", fontWeight: 400 }}>
             / noche
           </span>
-        </div>
+        </div> */}
 
         <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-          <span style={{ fontSize: 13 }}>📍</span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+          >
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
           <span
             style={{
               fontSize: 13,

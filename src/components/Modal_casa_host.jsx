@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import casasService from "../api/casas_service";
 
-import Modal_imagenes from "./Modal_imagenes";
 
 const inputStyle = {
   width: "100%",
@@ -56,7 +55,6 @@ export default function Modal_casa_host({
   });
   const [loading, setLoading] = useState(false);
 
-  const [showImagenes, setShowImagenes] = useState(false);
 
   useEffect(() => {
     if (!show) return;
@@ -294,27 +292,7 @@ export default function Modal_casa_host({
 
             {/* Botones */}
             <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              {esEditar && (
-                <button
-                  type="button"
-                  onClick={() => setShowImagenes(true)}
-                  style={{
-                    width: "100%",
-                    padding: "11px 0",
-                    borderRadius: 10,
-                    border: "1.5px solid rgba(0,180,230,0.35)",
-                    background: "rgba(0,180,230,0.06)",
-                    color: "#007aaa",
-                    fontWeight: 700,
-                    fontSize: 14,
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                    marginBottom: 10,
-                  }}
-                >
-                  📷 Gestionar imágenes
-                </button>
-              )}
+              
 
               <button
                 type="button"
@@ -384,11 +362,7 @@ export default function Modal_casa_host({
         </div>
       </div>
 
-      <Modal_imagenes
-        show={showImagenes}
-        onClose={() => setShowImagenes(false)}
-        casa={casa}
-      />
+      
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap');

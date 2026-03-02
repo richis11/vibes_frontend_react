@@ -5,7 +5,7 @@ import casaImagenesService from "../api/casa_imagenes_service";
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80";
 
-export default function Modal_imagenes({ show, onClose, casa }) {
+export default function Modal_imagenes({ show, onClose, casa, onImagenChange }) {
   const [imagenes, setImagenes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [subiendo, setSubiendo] = useState(false);
@@ -46,6 +46,7 @@ export default function Modal_imagenes({ show, onClose, casa }) {
         validos.length === 1 ? "Imagen subida" : `${validos.length} imágenes subidas`
       );
       fetchImagenes();
+      onImagenChange?.(casa.id);
     } catch {
       toast.error("Error al subir imagen");
     } finally {
@@ -69,6 +70,7 @@ export default function Modal_imagenes({ show, onClose, casa }) {
       await casaImagenesService.marcarPrincipal(casa.id, imagenId);
       toast.success("Imagen principal actualizada");
       fetchImagenes();
+      onImagenChange?.(casa.id);
     } catch {
       toast.error("Error al actualizar");
     }
