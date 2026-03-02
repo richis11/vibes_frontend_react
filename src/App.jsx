@@ -33,6 +33,8 @@ import Panel_host from "./pages/Panel_host";
 import Reservas_anfitrion from "./pages/Reservas_anfitrion";
 import Perfil_page from "./pages/Perfil_page";
 
+import Footer from "./components/Footer";
+
 function AppLayout() {
   const location = useLocation();
   const hideNavbar = location.pathname === "/login";
@@ -153,6 +155,7 @@ function AppLayout() {
           />
         </Routes>
       </main>
+      <Footer />
 
       {/* Chatbot flotante - solo visible fuera de la página de inicio */}
       {!hideNavbar && !hideChatbot && <Chatbot />}
