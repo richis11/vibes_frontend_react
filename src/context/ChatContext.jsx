@@ -30,8 +30,8 @@ export function ChatProvider({ children }) {
 
     try {
       const response = await fetch(
-        //"https://vibeschatbotpython-production.up.railway.app/chat",
-          "http://localhost:8000/chat",
+        "https://vibeschatbotpython-production.up.railway.app/chat",
+          //"http://localhost:8000/chat",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

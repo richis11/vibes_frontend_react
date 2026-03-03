@@ -102,10 +102,11 @@ function CasaCard({ casa }) {
           >
             ${parseFloat(casa.precio).toFixed(2)}
             <span style={{ fontWeight: 400, fontSize: 11, color: "#6c9aaa" }}>
-              {" "}/ noche
+              {" "}
+              / noche
             </span>
           </span>
-          <span
+          {/* <span
             style={{
               fontSize: 10,
               background: "rgba(0,180,230,0.1)",
@@ -116,7 +117,7 @@ function CasaCard({ casa }) {
             }}
           >
             Ver →
-          </span>
+          </span> */}
         </div>
       </div>
     </div>
@@ -138,6 +139,10 @@ function Chatbot() {
     if (!input.trim() || isLoading) return;
     await sendMessage(input);
     setInput("");
+
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   // Detectar teclado en pantalla (mobile)
@@ -160,7 +165,8 @@ function Chatbot() {
 
     window.visualViewport.addEventListener("resize", handleResize);
     handleResize();
-    return () => window.visualViewport.removeEventListener("resize", handleResize);
+    return () =>
+      window.visualViewport.removeEventListener("resize", handleResize);
   }, []);
 
   // Auto-scroll al recibir mensajes
@@ -171,9 +177,19 @@ function Chatbot() {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
     }
     if (lastMessage.sender === "bot" && lastBotMessageRef.current) {
-      lastBotMessageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      lastBotMessageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   }, [messages]);
+
+  // Scroll al final cuando se ABRE el chat
+  useEffect(() => {
+    if (isOpen && chatBodyRef.current) {
+      chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -220,11 +236,17 @@ function Chatbot() {
                   <img
                     src={logo}
                     alt="Logo"
-                    style={{ width: "100%", height: "100%", borderRadius: "50%" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      borderRadius: "50%",
+                    }}
                   />
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, fontSize: 15 }}>Asistente Vibes</div>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>
+                    Asistente Vibes
+                  </div>
                   <div style={{ fontSize: 11, opacity: 0.9 }}>
                     {isLoading ? "Escribiendo..." : "En línea"}
                   </div>
@@ -232,7 +254,15 @@ function Chatbot() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                style={{ background: "none", border: "none", color: "#fff", fontSize: 24, cursor: "pointer", padding: 0, lineHeight: 1 }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: "#fff",
+                  fontSize: 24,
+                  cursor: "pointer",
+                  padding: 0,
+                  lineHeight: 1,
+                }}
               >
                 ×
               </button>
@@ -251,7 +281,13 @@ function Chatbot() {
               }}
             >
               {messages.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "40px 20px", color: "#6c757d" }}>
+                <div
+                  style={{
+                    textAlign: "center",
+                    padding: "40px 20px",
+                    color: "#6c757d",
+                  }}
+                >
                   <div style={{ fontSize: 48, marginBottom: 10 }}>👋</div>
                   <p style={{ margin: 0, fontSize: 14 }}>
                     ¡Hola! Soy tu asistente virtual.
@@ -261,7 +297,8 @@ function Chatbot() {
                 </div>
               ) : (
                 messages.map((msg, index) => {
-                  const isLastBotMessage = msg.sender === "bot" && index === messages.length - 1;
+                  const isLastBotMessage =
+                    msg.sender === "bot" && index === messages.length - 1;
 
                   return (
                     <div
@@ -270,14 +307,18 @@ function Chatbot() {
                       style={{
                         display: "flex",
                         flexDirection: "column",
-                        alignItems: msg.sender === "user" ? "flex-end" : "flex-start",
+                        alignItems:
+                          msg.sender === "user" ? "flex-end" : "flex-start",
+                        width: "100%",
+                        minWidth: 0,
                       }}
                     >
                       {/* Burbuja del mensaje */}
                       <div
                         className="shadow-sm"
                         style={{
-                          backgroundColor: msg.sender === "user" ? "#0090c8" : "#fff",
+                          backgroundColor:
+                            msg.sender === "user" ? "#0090c8" : "#fff",
                           color: msg.sender === "user" ? "#fff" : "#212529",
                           padding: "10px 14px",
                           borderRadius: 12,
@@ -296,7 +337,13 @@ function Chatbot() {
 
                       {/* Cards de casas — solo en mensajes del bot con casas */}
                       {msg.sender === "bot" && msg.casas?.length > 0 && (
-                        <div style={{ marginBottom: 8 }}>
+                        <div
+                          style={{
+                            marginBottom: 8,
+                            width: "100%",
+                            boxSizing: "border-box",
+                          }}
+                        >
                           {msg.casas.map((casa) => (
                             <CasaCard key={casa.id} casa={casa} />
                           ))}
@@ -324,7 +371,9 @@ function Chatbot() {
                       <div
                         key={i}
                         style={{
-                          width: 8, height: 8, borderRadius: "50%",
+                          width: 8,
+                          height: 8,
+                          borderRadius: "50%",
                           background: "#0090c8",
                           animation: `pulse 1.4s ease-in-out ${delay}s infinite`,
                         }}
@@ -337,7 +386,12 @@ function Chatbot() {
 
             {/* Footer */}
             <Card.Footer style={{ background: "#fff", padding: 12 }}>
-              <Form onSubmit={(e) => { e.preventDefault(); handleSend(); }}>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSend();
+                }}
+              >
                 <div style={{ display: "flex", gap: 8 }}>
                   <Form.Control
                     ref={inputRef}
@@ -359,7 +413,8 @@ function Chatbot() {
                     style={{
                       borderRadius: 10,
                       padding: "8px 20px",
-                      background: "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
+                      background:
+                        "linear-gradient(135deg, #00c6f0 0%, #0090c8 100%)",
                       border: "none",
                       fontWeight: 600,
                     }}
