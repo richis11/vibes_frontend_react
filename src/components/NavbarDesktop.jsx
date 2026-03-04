@@ -45,13 +45,15 @@ function NavbarDesktop() {
           {/* Opciones Centro */}
           <Nav className="mx-auto align-items-lg-center gap-3">
             {/* ========== CASAS (siempre visible) ========== */}
-            {!isHostMode&&(<Nav.Link as={Link} to="/casas">
-              Casas
-            </Nav.Link>)}
-            
+            {/* ========== CASAS (visible para no logueados, guest mode, y siempre) ========== */}
+            {(!isLoggedIn || !isHostMode || !isHost ) && (
+              <Nav.Link as={Link} to="/casas">
+                Casas
+              </Nav.Link>
+            )}
 
             {/* ========== OPCIONES MODO CLIENTE (solo si está logueado) ========== */}
-            {isLoggedIn && isGuestMode && (
+            {(isLoggedIn && !isHost || isLoggedIn && isGuestMode) && (
               <Nav.Link as={Link} to="/mis_reservas">
                 <i className="bi bi-calendar-check me-2" />
                 Mis Reservas
@@ -165,7 +167,7 @@ function NavbarDesktop() {
           </Nav>
         </Navbar.Collapse>
       </Container>
-      
+
       {/* Modal Conviértete en Anfitrión */}
       <ModalConvierteAnfitrion
         show={showModalAnfitrion}

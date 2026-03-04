@@ -559,7 +559,7 @@ export default function Modal_login({ show, onClose, onSuccess }) {
                   showPassword={showLoginPass}
                 />
 
-                <div
+                {/* <div
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -590,7 +590,7 @@ export default function Modal_login({ show, onClose, onSuccess }) {
                   >
                     Mantener sesión iniciada
                   </label>
-                </div>
+                </div> */}
 
                 {/* 👇 Mensaje de error de login */}
                 {loginError && (

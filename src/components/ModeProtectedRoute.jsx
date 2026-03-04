@@ -9,32 +9,27 @@ import { useAuth } from "../context/AuthContext";
  * @param {string} requiredMode - Modo requerido: MODES.GUEST o MODES.HOST
  * @param {string} redirectTo - Ruta a la que redirigir si no cumple (opcional)
  */
-export default function ModeProtectedRoute({
-  children,
-  requiredMode,
-  redirectTo,
-}) {
+export default function ModeProtectedRoute({ children, requiredMode, redirectTo }) {
   const { currentMode } = useMode();
   const { isHost, loading } = useAuth();
 
-  // Esperar a que cargue la autenticación
   if (loading) return null;
 
-  // Si requiere modo HOST pero el usuario no es host, redirigir
-  if (requiredMode === MODES.HOST && !isHost) {
-    return <Navigate to="/casas" replace />;
+  // Rutas HOST: requiere ser host Y estar en modo host
+  if (requiredMode === MODES.HOST) {
+    if (!isHost) return <Navigate to="/casas" replace />;
+    if (currentMode !== MODES.HOST) return <Navigate to={redirectTo || "/casas"} replace />;
+    return children;
   }
 
-  // Si el modo actual no coincide con el requerido, redirigir
-  if (currentMode !== requiredMode) {
-    // Determinar redirección según el modo ACTUAL del usuario
-    const defaultRedirect = currentMode === MODES.GUEST
-      ? "/"      // Si está en modo GUEST, ir a casas
-      : "/mi-panel";  // Si está en modo HOST, ir al panel
-
-    return <Navigate to={redirectTo || defaultRedirect} replace />;
+  // Rutas GUEST: si el usuario NO es host, siempre puede acceder (no tiene modo)
+  // Si ES host, solo puede acceder si está en modo guest
+  if (requiredMode === MODES.GUEST) {
+    if (isHost && currentMode !== MODES.GUEST) {
+      return <Navigate to={redirectTo || "/mi-panel"} replace />;
+    }
+    return children; // ✅ no-host siempre pasa, host en guest mode también pasa
   }
 
-  // Todo bien, renderizar el componente
   return children;
 }
