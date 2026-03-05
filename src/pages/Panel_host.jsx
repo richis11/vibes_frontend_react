@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import casasService from "../api/casas_service";
@@ -37,6 +37,14 @@ const estadoConfig = {
     bg: "rgba(217,119,6,0.1)",
   },
 };
+
+ // Filtro
+  const FILTROS = [
+    { key: "todas", label: "Todas" },
+    { key: "disponible", label: "Disponibles" },
+    { key: "ocupada", label: "Ocupadas" },
+    { key: "inactiva", label: "Inactivas" },
+  ];
 
 function Chip({ cfg }) {
   return (
@@ -374,6 +382,142 @@ function StatCard({ icon, label, value, color }) {
   );
 }
 
+// ─── Dropdown de filtro para móvil ────────────────────────────────────────
+function FiltroDropdown({ filtroDisp, setFiltroDisp }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isFiltered = filtroDisp !== "todas";
+
+  return (
+    <div ref={ref} style={{ position: "relative", zIndex: 1000 }}>
+      <button
+        onClick={() => setOpen((p) => !p)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 34,
+          height: 34,
+          borderRadius: 9,
+          border: `1.5px solid ${isFiltered ? "#00b4e6" : "rgba(0,180,230,0.3)"}`,
+          background: isFiltered ? "#00b4e6" : "transparent",
+          color: isFiltered ? "#fff" : "#00b4e6",
+          cursor: "pointer",
+          transition: "all 0.18s",
+          padding: 0,
+          position: "relative",
+        }}
+        title="Filtrar"
+      >
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+          <line x1="11" y1="18" x2="13" y2="18" />
+        </svg>
+        {isFiltered && (
+          <span
+            style={{
+              position: "absolute",
+              top: -4,
+              right: -4,
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: "#f97316",
+              border: "1.5px solid #fff",
+            }}
+          />
+        )}
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 10px)",
+            right: 0,
+            background: "#fff",
+            borderRadius: 14,
+            border: "1.5px solid rgba(0,180,230,0.15)",
+            boxShadow: "0 8px 32px rgba(0,100,160,0.14)",
+            overflow: "hidden",
+            minWidth: 170,
+            animation: "dropIn 0.16s cubic-bezier(.22,1,.36,1) both",
+          }}
+        >
+          {FILTROS.map((f, i) => {
+            const selected = filtroDisp === f.key;
+            return (
+              <button
+                key={f.key}
+                onClick={() => {
+                  setFiltroDisp(f.key);
+                  setOpen(false);
+                }}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "11px 14px",
+                  border: "none",
+                  borderBottom:
+                    i < FILTROS.length - 1
+                      ? "1px solid rgba(0,180,230,0.07)"
+                      : "none",
+                  background: selected ? "rgba(0,180,230,0.07)" : "transparent",
+                  color: selected ? "#0090c8" : "#334e5c",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 13,
+                  fontWeight: selected ? 700 : 400,
+                  cursor: "pointer",
+                  textAlign: "left",
+                }}
+              >
+                <span>{f.label}</span>
+                {selected && (
+                  <span style={{ marginLeft: "auto" }}>
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#00b4e6"
+                      strokeWidth="2.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────
 export default function Panel_host() {
   const { user } = useAuth();
@@ -382,6 +526,7 @@ export default function Panel_host() {
   const [showModal, setShowModal] = useState(false);
   const [casaEditando, setCasaEditando] = useState(null);
   const [filtro, setFiltro] = useState("todas");
+  const [busqueda, setBusqueda] = useState("");
 
   const [showImagenes, setShowImagenes] = useState(false);
   const [casaImagenes, setCasaImagenes] = useState(null);
@@ -472,22 +617,22 @@ export default function Panel_host() {
   ).length;
   const ingresos = casas.reduce((acc, c) => acc + parseFloat(c.precio || 0), 0);
 
-  // Filtro
-  const FILTROS = [
-    { key: "todas", label: "Todas" },
-    { key: "disponible", label: "Disponibles" },
-    { key: "ocupada", label: "Ocupadas" },
-    { key: "inactiva", label: "Inactivas" },
-  ];
+ 
 
-  const casasFiltradas =
-    filtro === "todas"
-      ? casas
-      : filtro === "inactiva"
-        ? casas.filter((c) => c.estado === "inactiva")
-        : casas.filter(
-            (c) => c.disponibilidad === filtro && c.estado === "activa",
-          );
+  const casasFiltradas = casas
+    .filter((c) =>
+      filtro === "todas"
+        ? true
+        : filtro === "inactiva"
+          ? c.estado === "inactiva"
+          : c.disponibilidad === filtro && c.estado === "activa",
+    )
+    .filter(
+      (c) =>
+        busqueda.trim() === "" ||
+        c.nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        c.direccion?.toLowerCase().includes(busqueda.toLowerCase()),
+    );
 
   return (
     <>
@@ -510,6 +655,14 @@ export default function Panel_host() {
         .nueva-btn { transition: all 0.2s; }
         .nueva-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,180,230,0.45) !important; }
         .filtro-tab { transition: all 0.18s; cursor: pointer; }
+
+        @keyframes dropIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.panel-filtros-desktop { display: flex; gap: 8px; flex-wrap: wrap; }
+.panel-filtros-mobile  { display: none; }
+@media (max-width: 600px) {
+  .panel-filtros-desktop { display: none !important; }
+  .panel-filtros-mobile  { display: block !important; }
+}
       `}</style>
 
       <div
@@ -655,62 +808,147 @@ export default function Panel_host() {
             </div>
           )}
 
-          {/* Filtros */}
+          {/* Buscador + Filtros */}
           {user?.host_id && (
             <>
               <div
                 style={{
                   display: "flex",
-                  gap: 4,
                   flexWrap: "wrap",
-                  background: "rgba(0,160,210,0.07)",
-                  borderRadius: 12,
-                  padding: 5,
+                  gap: 12,
+                  alignItems: "center",
                   marginBottom: 24,
                 }}
               >
-                {FILTROS.map((f) => (
-                  <button
-                    key={f.key}
-                    className="filtro-tab"
-                    onClick={() => setFiltro(f.key)}
+                {/* Buscador */}
+                <div
+                  style={{
+                    position: "relative",
+                    flex: "1 1 260px",
+                    maxWidth: 480,
+                    zIndex: 1000,
+                  }}
+                >
+                  {/* Lupa */}
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#00b4e6"
+                    strokeWidth="2.2"
                     style={{
-                      flex: 1,
-                      minWidth: 80,
-                      padding: "8px 12px",
-                      border: "none",
-                      borderRadius: 8,
-                      fontSize: 13,
-                      fontWeight: 600,
-                      fontFamily: "'DM Sans', sans-serif",
-                      background: filtro === f.key ? "#fff" : "transparent",
-                      color:
-                        filtro === f.key ? "#0090c8" : "rgba(0,100,148,0.45)",
-                      boxShadow:
-                        filtro === f.key
-                          ? "0 2px 10px rgba(0,150,200,0.15)"
-                          : "none",
+                      position: "absolute",
+                      left: 14,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      zIndex: 1,
                     }}
                   >
-                    {f.label}
-                    {f.key !== "todas" && !loading && (
-                      <span
-                        style={{ marginLeft: 5, fontSize: 11, opacity: 0.6 }}
-                      >
-                        (
-                        {f.key === "inactiva"
-                          ? casas.filter((c) => c.estado === "inactiva").length
-                          : casas.filter(
-                              (c) =>
-                                c.disponibilidad === f.key &&
-                                c.estado === "activa",
-                            ).length}
-                        )
-                      </span>
-                    )}
-                  </button>
-                ))}
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                  </svg>
+
+                  <input
+                    type="text"
+                    placeholder="Buscar por nombre o dirección..."
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding:
+                        "11px 48px 11px 40px" /* padding derecho amplio para el dropdown móvil */,
+                      fontSize: 14,
+                      borderRadius: 12,
+                      border: "1.5px solid rgba(0,180,230,0.25)",
+                      background: "#fff",
+                      color: "#003a56",
+                      fontFamily: "inherit",
+                      boxSizing: "border-box",
+                      outline: "none",
+                      transition: "all 0.2s",
+                    }}
+                    onFocus={(e) => (e.target.style.borderColor = "#00b4e6")}
+                    onBlur={(e) =>
+                      (e.target.style.borderColor = "rgba(0,180,230,0.25)")
+                    }
+                  />
+
+                  {/* Dropdown dentro del input — solo visible en móvil */}
+                  <div
+                    className="panel-filtros-mobile"
+                    style={{
+                      position: "absolute",
+                      right: 8,
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  >
+                    <FiltroDropdown
+                      filtroDisp={filtro}
+                      setFiltroDisp={setFiltro}
+                    />
+                  </div>
+                </div>
+
+                {/* Botones de filtro — solo en desktop */}
+                <div className="panel-filtros-desktop">
+                  {FILTROS.map((f) => (
+                    <button
+                      key={f.key}
+                      onClick={() => setFiltro(f.key)}
+                      style={{
+                        padding: "9px 18px",
+                        borderRadius: 10,
+                        fontSize: 13,
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        border: "1.5px solid",
+                        fontFamily: "'DM Sans', sans-serif",
+                        borderColor:
+                          filtro === f.key ? "#00b4e6" : "rgba(0,180,230,0.2)",
+                        background:
+                          filtro === f.key
+                            ? "linear-gradient(135deg, #00c6f0, #0090c8)"
+                            : "#fff",
+                        color: filtro === f.key ? "#fff" : "#5aabb8",
+                        boxShadow:
+                          filtro === f.key
+                            ? "0 4px 14px rgba(0,180,230,0.3)"
+                            : "none",
+                        transition: "all 0.18s",
+                      }}
+                    >
+                      {f.label}
+                      {f.key !== "todas" && !loading && (
+                        <span
+                          style={{ marginLeft: 5, fontSize: 11, opacity: 0.75 }}
+                        >
+                          (
+                          {f.key === "inactiva"
+                            ? casas.filter((c) => c.estado === "inactiva")
+                                .length
+                            : casas.filter(
+                                (c) =>
+                                  c.disponibilidad === f.key &&
+                                  c.estado === "activa",
+                              ).length}
+                          )
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
+
+              {/* Contador */}
+              {!loading && (
+                <p style={{ color: "#8bb8c8", fontSize: 13, marginBottom: 20 }}>
+                  {casasFiltradas.length === 0
+                    ? "No se encontraron propiedades"
+                    : `${casasFiltradas.length} ${casasFiltradas.length === 1 ? "propiedad encontrada" : "propiedades encontradas"}`}
+                </p>
+              )}
 
               {/* Grid */}
               <div className="panel-grid">
