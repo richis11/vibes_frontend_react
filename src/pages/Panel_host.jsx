@@ -711,7 +711,7 @@ export default function Panel_host() {
                 Mis propiedades
               </h1>
               <p style={{ color: "#5aabb8", fontSize: 14, margin: 0 }}>
-                {user?.nombres ? `Hola, ${user.nombres} 🏡` : ""}
+                {user?.nombres ? `Hola, ${user.nombres} ` : ""}
               </p>
             </div>
 
@@ -741,7 +741,7 @@ export default function Panel_host() {
           </div>
 
           {/* Stats */}
-          {!loading && casas.length > 0 && (
+          {/* {!loading && casas.length > 0 && (
             <div
               style={{
                 display: "flex",
@@ -775,7 +775,7 @@ export default function Panel_host() {
                 color="rgba(124,58,237,0.1)"
               />
             </div>
-          )}
+          )} */}
 
           {/* Sin host_id */}
           {!user?.host_id && !loading && (

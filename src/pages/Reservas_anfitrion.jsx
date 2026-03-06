@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
@@ -238,6 +238,142 @@ function BotonesZona({ reserva, isMobile, onEstadoChanged }) {
   );
 }
 
+// ─── Dropdown filtro móvil ────────────────────────────────────────────────
+function FiltroDropdown({ filtroDisp, setFiltroDisp }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isFiltered = filtroDisp !== "todas";
+
+  return (
+    <div ref={ref} style={{ position: "relative", zIndex: 1000 }}>
+      <button
+        onClick={() => setOpen((p) => !p)}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 34,
+          height: 34,
+          borderRadius: 9,
+          border: `1.5px solid ${isFiltered ? "#00b4e6" : "rgba(0,180,230,0.3)"}`,
+          background: isFiltered ? "#00b4e6" : "transparent",
+          color: isFiltered ? "#fff" : "#00b4e6",
+          cursor: "pointer",
+          transition: "all 0.18s",
+          padding: 0,
+          position: "relative",
+        }}
+        title="Filtrar"
+      >
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+          <line x1="11" y1="18" x2="13" y2="18" />
+        </svg>
+        {isFiltered && (
+          <span
+            style={{
+              position: "absolute",
+              top: -4,
+              right: -4,
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: "#f97316",
+              border: "1.5px solid #fff",
+            }}
+          />
+        )}
+      </button>
+
+      {open && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 10px)",
+            right: 0,
+            background: "#fff",
+            borderRadius: 14,
+            border: "1.5px solid rgba(0,180,230,0.15)",
+            boxShadow: "0 8px 32px rgba(0,100,160,0.14)",
+            overflow: "hidden",
+            minWidth: 180,
+            animation: "dropIn 0.16s cubic-bezier(.22,1,.36,1) both",
+          }}
+        >
+          {FILTROS.map((f, i) => {
+            const selected = filtroDisp === f.key;
+            return (
+              <button
+                key={f.key}
+                onClick={() => {
+                  setFiltroDisp(f.key);
+                  setOpen(false);
+                }}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "11px 14px",
+                  border: "none",
+                  borderBottom:
+                    i < FILTROS.length - 1
+                      ? "1px solid rgba(0,180,230,0.07)"
+                      : "none",
+                  background: selected ? "rgba(0,180,230,0.07)" : "transparent",
+                  color: selected ? "#0090c8" : "#334e5c",
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontSize: 13,
+                  fontWeight: selected ? 700 : 400,
+                  cursor: "pointer",
+                  textAlign: "left",
+                }}
+              >
+                <span>{f.label}</span>
+                {selected && (
+                  <span style={{ marginLeft: "auto" }}>
+                    <svg
+                      width="13"
+                      height="13"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#00b4e6"
+                      strokeWidth="2.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Tarjeta de Reserva ───────────────────────────────────────────────────
 function ReservaCard({ reserva, onEstadoChanged }) {
   const [hovered, setHovered] = useState(false);
@@ -289,7 +425,11 @@ function ReservaCard({ reserva, onEstadoChanged }) {
         }}
       >
         <img
-          src={imgError ? IMAGEN_GENERICA : reserva.imagen_principal || IMAGEN_GENERICA}
+          src={
+            imgError
+              ? IMAGEN_GENERICA
+              : reserva.imagen_principal || IMAGEN_GENERICA
+          }
           alt="Casa"
           onError={() => setImgError(true)}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
@@ -391,11 +531,24 @@ function ReservaCard({ reserva, onEstadoChanged }) {
             >
               Llegada
             </div>
-            <div style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: "#002d44" }}>
+            <div
+              style={{
+                fontSize: isMobile ? 12 : 14,
+                fontWeight: 600,
+                color: "#002d44",
+              }}
+            >
               {formatFecha(reserva.fecha_inicio)}
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", color: "#b0d4e0", fontSize: 16 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              color: "#b0d4e0",
+              fontSize: 16,
+            }}
+          >
             →
           </div>
           <div>
@@ -411,7 +564,13 @@ function ReservaCard({ reserva, onEstadoChanged }) {
             >
               Salida
             </div>
-            <div style={{ fontSize: isMobile ? 12 : 14, fontWeight: 600, color: "#002d44" }}>
+            <div
+              style={{
+                fontSize: isMobile ? 12 : 14,
+                fontWeight: 600,
+                color: "#002d44",
+              }}
+            >
               {formatFecha(reserva.fecha_fin)}
             </div>
           </div>
@@ -419,14 +578,27 @@ function ReservaCard({ reserva, onEstadoChanged }) {
 
         {/* DESKTOP: precio + botones en la misma fila */}
         {!isMobile && (
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 10,
+            }}
+          >
             <div>
-              <span style={{ fontSize: 20, fontWeight: 800, color: "#002d44" }}>${total}</span>
+              <span style={{ fontSize: 20, fontWeight: 800, color: "#002d44" }}>
+                ${total}
+              </span>
               <span style={{ fontSize: 12, color: "#8bb8c8", marginLeft: 4 }}>
                 {reserva.moneda} · ${precioPorNoche}/noche
               </span>
             </div>
-            <BotonesZona reserva={reserva} isMobile={false} onEstadoChanged={onEstadoChanged} />
+            <BotonesZona
+              reserva={reserva}
+              isMobile={false}
+              onEstadoChanged={onEstadoChanged}
+            />
           </div>
         )}
 
@@ -434,12 +606,18 @@ function ReservaCard({ reserva, onEstadoChanged }) {
         {isMobile && (
           <>
             <div>
-              <span style={{ fontSize: 18, fontWeight: 800, color: "#002d44" }}>${total}</span>
+              <span style={{ fontSize: 18, fontWeight: 800, color: "#002d44" }}>
+                ${total}
+              </span>
               <span style={{ fontSize: 11, color: "#8bb8c8", marginLeft: 4 }}>
                 {reserva.moneda} · ${precioPorNoche}/n
               </span>
             </div>
-            <BotonesZona reserva={reserva} isMobile={true} onEstadoChanged={onEstadoChanged} />
+            <BotonesZona
+              reserva={reserva}
+              isMobile={true}
+              onEstadoChanged={onEstadoChanged}
+            />
           </>
         )}
       </div>
@@ -496,6 +674,7 @@ export default function Reservas_anfitrion() {
   const [reservas, setReservas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState("todas");
+  const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
     const fetchReservas = async () => {
@@ -505,7 +684,9 @@ export default function Reservas_anfitrion() {
       }
 
       try {
-        const todasReservas = await reservasService.getReservasPorHost(user.host_id);
+        const todasReservas = await reservasService.getReservasPorHost(
+          user.host_id,
+        );
 
         console.log("DATOS RECIBIDOS PARA RESERVAS HOST");
         console.log(todasReservas);
@@ -516,7 +697,7 @@ export default function Reservas_anfitrion() {
           ordenadas.map(async (reserva) => {
             try {
               const imagenes = await casaImagenesService.getImagenesPorCasa(
-                reserva.casa_id
+                reserva.casa_id,
               );
               const principal =
                 imagenes.find((img) => img.es_principal) ?? imagenes[0];
@@ -524,7 +705,7 @@ export default function Reservas_anfitrion() {
             } catch {
               return { ...reserva, imagen_principal: null };
             }
-          })
+          }),
         );
 
         setReservas(reservasConImagen);
@@ -543,15 +724,20 @@ export default function Reservas_anfitrion() {
 
   const handleEstadoChanged = (id, nuevoEstado) => {
     setReservas((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, estado: nuevoEstado } : r))
+      prev.map((r) => (r.id === id ? { ...r, estado: nuevoEstado } : r)),
     );
   };
 
-  const reservasFiltradas =
-    filtro === "todas"
-      ? reservas
-      : reservas.filter((r) => r.estado === filtro);
-
+  const reservasFiltradas = reservas
+    .filter((r) => filtro === "todas" || r.estado === filtro)
+    .filter(
+      (r) =>
+        busqueda.trim() === "" ||
+        r.casa_nombre?.toLowerCase().includes(busqueda.toLowerCase()) ||
+        `${r.guest_nombres ?? ""} ${r.guest_apellidos ?? ""}`
+          .toLowerCase()
+          .includes(busqueda.toLowerCase()),
+    );
   return (
     <>
       <style>{`
@@ -568,6 +754,13 @@ export default function Reservas_anfitrion() {
           0%   { background-position: 200% 0; }
           100% { background-position: -200% 0; }
         }
+          @keyframes dropIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+.host-filtros-desktop { display: flex; gap: 8px; flex-wrap: wrap; }
+.host-filtros-mobile  { display: none; }
+@media (max-width: 600px) {
+  .host-filtros-desktop { display: none !important; }
+  .host-filtros-mobile  { display: block !important; }
+}
       `}</style>
 
       <div
@@ -599,69 +792,141 @@ export default function Reservas_anfitrion() {
             </p>
           </div>
 
-          {/* Filtros */}
+          {/* Buscador + Filtros */}
           <div
             style={{
               display: "flex",
-              gap: 8,
               flexWrap: "wrap",
+              gap: 12,
+              alignItems: "center",
               marginBottom: 24,
-              background: "rgba(0,180,230,0.06)",
-              borderRadius: 14,
-              padding: "6px 8px",
             }}
           >
-            {FILTROS.map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setFiltro(f.key)}
+            {/* Botones — solo en desktop */}
+            <div className="host-filtros-desktop">
+              {FILTROS.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => setFiltro(f.key)}
+                  style={{
+                    padding: "9px 18px",
+                    borderRadius: 10,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    border: "1.5px solid",
+                    fontFamily: "'DM Sans', sans-serif",
+                    borderColor:
+                      filtro === f.key ? "#00b4e6" : "rgba(0,180,230,0.2)",
+                    background:
+                      filtro === f.key
+                        ? "linear-gradient(135deg, #00c6f0, #0090c8)"
+                        : "#fff",
+                    color: filtro === f.key ? "#fff" : "#5aabb8",
+                    boxShadow:
+                      filtro === f.key
+                        ? "0 4px 14px rgba(0,180,230,0.3)"
+                        : "none",
+                    transition: "all 0.18s",
+                  }}
+                >
+                  {f.label}
+                  {f.key !== "todas" && !loading && (
+                    <span
+                      style={{ marginLeft: 5, fontSize: 11, opacity: 0.75 }}
+                    >
+                      ({reservas.filter((r) => r.estado === f.key).length})
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Buscador */}
+            <div
+              style={{
+                position: "relative",
+                flex: "1 1 240px",
+                maxWidth: 480,
+                zIndex: 1000,
+              }}
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#00b4e6"
+                strokeWidth="2.2"
                 style={{
-                  padding: "7px 16px",
-                  borderRadius: 10,
-                  border: "none",
-                  fontSize: 13,
-                  fontWeight: 600,
-                  fontFamily: "'DM Sans', sans-serif",
-                  cursor: "pointer",
-                  background: filtro === f.key ? "#fff" : "transparent",
-                  color:
-                    filtro === f.key ? "#0090c8" : "rgba(0,100,148,0.45)",
-                  boxShadow:
-                    filtro === f.key
-                      ? "0 2px 10px rgba(0,150,200,0.15)"
-                      : "none",
-                  transition: "all 0.18s",
+                  position: "absolute",
+                  left: 14,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  zIndex: 1,
                 }}
               >
-                {f.label}
-                {f.key !== "todas" && !loading && (
-                  <span
-                    style={{
-                      marginLeft: 5,
-                      fontSize: 11,
-                      opacity:
-                        reservas.filter((r) => r.estado === f.key).length > 0
-                          ? 1
-                          : 0.4,
-                    }}
-                  >
-                    ({reservas.filter((r) => r.estado === f.key).length})
-                  </span>
-                )}
-              </button>
-            ))}
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input
+                type="text"
+                placeholder="Buscar por casa o huésped..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "11px 48px 11px 40px",
+                  fontSize: 14,
+                  borderRadius: 12,
+                  border: "1.5px solid rgba(0,180,230,0.25)",
+                  background: "#fff",
+                  color: "#003a56",
+                  fontFamily: "inherit",
+                  boxSizing: "border-box",
+                  outline: "none",
+                  transition: "all 0.2s",
+                }}
+                onFocus={(e) => (e.target.style.borderColor = "#00b4e6")}
+                onBlur={(e) =>
+                  (e.target.style.borderColor = "rgba(0,180,230,0.25)")
+                }
+              />
+              {/* Dropdown — solo en móvil */}
+              <div
+                className="host-filtros-mobile"
+                style={{
+                  position: "absolute",
+                  right: 8,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <FiltroDropdown filtroDisp={filtro} setFiltroDisp={setFiltro} />
+              </div>
+            </div>
           </div>
+
+          {/* Contador */}
+          {!loading && (
+            <p style={{ color: "#8bb8c8", fontSize: 13, marginBottom: 20 }}>
+              {reservasFiltradas.length === 0
+                ? "No se encontraron reservas"
+                : `${reservasFiltradas.length} ${reservasFiltradas.length === 1 ? "reserva encontrada" : "reservas encontradas"}`}
+            </p>
+          )}
 
           {/* Lista */}
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             {loading ? (
-              Array.from({ length: 3 }).map((_, i) => (
-                <SkeletonCard key={i} />
-              ))
+              Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
             ) : reservasFiltradas.length > 0 ? (
               reservasFiltradas.map((r, i) => (
                 <div key={r.id} style={{ animationDelay: `${i * 0.07}s` }}>
-                  <ReservaCard reserva={r} onEstadoChanged={handleEstadoChanged} />
+                  <ReservaCard
+                    reserva={r}
+                    onEstadoChanged={handleEstadoChanged}
+                  />
                 </div>
               ))
             ) : (
