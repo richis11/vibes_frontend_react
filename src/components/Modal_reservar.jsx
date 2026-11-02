@@ -6,6 +6,7 @@ import "react-day-picker/style.css";
 import reservasService from "../api/reservas_service";
 import { useAuth } from "../context/AuthContext";
 import { mensajeError } from "../utils/mensajeError";
+import Modal_pago from "./Modal_pago";
 
 
 const IMAGEN_GENERICA =
@@ -32,6 +33,7 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
   const [loading, setLoading] = useState(false);
   const [calculo, setCalculo] = useState(null);
   const [ocupadas, setOcupadas] = useState([]);
+  const [reservaCreada, setReservaCreada] = useState(null); // paso 2: pagar
 
   const cargarOcupadas = () => {
     reservasService
@@ -64,6 +66,7 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
       setFechaInicio("");
       setFechaFin("");
       setCalculo(null);
+      setReservaCreada(null);
     }
   }, [show]);
 
@@ -115,10 +118,13 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFin,
       });
-      toast.success(
-        `¡Reserva creada exitosamente! Total: $${data.total} ${data.moneda}`,
-      );
-      onClose();
+      toast.success("¡Reserva creada! Ahora realiza el pago para confirmarla.");
+      setReservaCreada({
+        id: data.id,
+        total: data.total,
+        moneda: data.moneda,
+        casa_nombre: casa.nombre,
+      });
     } catch (err) {
       toast.error(mensajeError(err, "Error al crear la reserva"));
       if (err?.response?.status === 409) {
@@ -133,6 +139,10 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
   };
 
   if (!show || !casa) return null;
+
+  if (reservaCreada) {
+    return <Modal_pago show onClose={onClose} reserva={reservaCreada} />;
+  }
 
   return (
     <>
@@ -312,7 +322,7 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
             </button>
 
             <p style={{ textAlign: "center", fontSize: 11, color: "#aac8d6", marginTop: 10 }}>
-              No se te cobrará nada todavía
+              Después de reservar te mostramos cómo pagar por transferencia o depósito
             </p>
           </div>
         </div>

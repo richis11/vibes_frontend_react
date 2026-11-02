@@ -4,6 +4,8 @@ import { toast } from "react-toastify";
 import reservasService from "../api/reservas_service";
 import { useAuth } from "../context/AuthContext";
 import casaImagenesService from "../api/casa_imagenes_service";
+import pagosService from "../api/pagos_service";
+import Modal_pago from "../components/Modal_pago";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=400&q=80";
@@ -52,6 +54,7 @@ const estadoConfig = {
 const FILTROS = [
   { key: "todas", label: "Todas" },
   { key: "pendiente_pago", label: "Pendientes" },
+  { key: "pagada", label: "Pagadas" },
   { key: "confirmada", label: "Confirmadas" },
   { key: "completada", label: "Completadas" },
   { key: "cancelada", label: "Canceladas" },
@@ -231,7 +234,14 @@ function FiltroDropdown({ filtroDisp, setFiltroDisp }) {
 }
 
 // ─── Tarjeta de reserva (estilo Reservas_anfitrion) ───────────────────────
-function ReservaCard({ reserva }) {
+// Botón de pago según el último comprobante enviado
+const botonPago = {
+  en_revision: { label: "⏳ Pago en revisión", color: "#d97706", borde: "rgba(217,119,6,0.35)" },
+  rechazado: { label: "⚠️ Reenviar comprobante", color: "#ef4444", borde: "rgba(239,68,68,0.35)" },
+  ninguno: { label: "💳 Pagar", color: "#fff", borde: "transparent" },
+};
+
+function ReservaCard({ reserva, pago, onPagar }) {
   const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -246,6 +256,8 @@ function ReservaCard({ reserva }) {
   const noches = reserva.noches ?? 0;
   const total = parseFloat(reserva.total ?? 0).toFixed(2);
   const precioPorNoche = parseFloat(reserva.precio_por_noche ?? 0).toFixed(2);
+  const pendiente = reserva.estado === "pendiente_pago";
+  const cfgPago = botonPago[pago?.estado] ?? botonPago.ninguno;
 
   return (
     <div
@@ -449,6 +461,29 @@ function ReservaCard({ reserva }) {
               {reserva.moneda} · ${precioPorNoche}/noche
             </span>
           </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+          {pendiente && (
+            <button
+              onClick={() => onPagar(reserva)}
+              style={{
+                padding: isMobile ? "7px 12px" : "8px 16px",
+                borderRadius: 10,
+                border: `1.5px solid ${cfgPago.borde}`,
+                background:
+                  cfgPago === botonPago.ninguno
+                    ? "linear-gradient(135deg, #00c6f0, #0090c8)"
+                    : "#fff",
+                color: cfgPago.color,
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+                fontFamily: "'DM Sans', sans-serif",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {cfgPago.label}
+            </button>
+          )}
           <button
             onClick={() => navigate(`/casas/${reserva.casa_id}`)}
             style={{
@@ -467,6 +502,7 @@ function ReservaCard({ reserva }) {
           >
             Ver casa
           </button>
+          </div>
         </div>
       </div>
     </div>
@@ -515,6 +551,24 @@ export default function Mis_reservas() {
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState("todas");
   const [busqueda, setBusqueda] = useState("");
+  const [ultimoPago, setUltimoPago] = useState({}); // reserva_id -> último pago
+  const [reservaAPagar, setReservaAPagar] = useState(null);
+
+  const cargarPagos = () => {
+    pagosService
+      .getMisPagos()
+      .then((pagos) => {
+        // Vienen del más nuevo al más viejo: el primero de cada reserva es el último
+        const porReserva = {};
+        for (const p of pagos) porReserva[p.reserva_id] ??= p;
+        setUltimoPago(porReserva);
+      })
+      .catch(() => setUltimoPago({}));
+  };
+
+  useEffect(() => {
+    if (user?.persona_id) cargarPagos();
+  }, [user]);
 
   useEffect(() => {
     const fetchReservas = async () => {
@@ -802,7 +856,11 @@ export default function Mis_reservas() {
                 ) : reservasFiltradas.length > 0 ? (
                   reservasFiltradas.map((r, i) => (
                     <div key={r.id} style={{ animationDelay: `${i * 0.07}s` }}>
-                      <ReservaCard reserva={r} />
+                      <ReservaCard
+                        reserva={r}
+                        pago={ultimoPago[r.id]}
+                        onPagar={setReservaAPagar}
+                      />
                     </div>
                   ))
                 ) : (
@@ -877,6 +935,13 @@ export default function Mis_reservas() {
           )}
         </div>
       </div>
+
+      <Modal_pago
+        show={!!reservaAPagar}
+        reserva={reservaAPagar}
+        onClose={() => setReservaAPagar(null)}
+        onEnviado={cargarPagos}
+      />
     </>
   );
 }

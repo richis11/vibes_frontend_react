@@ -109,6 +109,10 @@ function NavbarDesktop() {
                   <i className="bi bi-calendar-check me-2" />
                   Reservas
                 </NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/adm_pagos">
+                  <i className="bi bi-cash-coin me-2" />
+                  Pagos
+                </NavDropdown.Item>
               </NavDropdown>
             )}
 

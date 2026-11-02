@@ -24,6 +24,7 @@ import Adm_casas from "./pages/Adm_casas";
 import Adm_personas from "./pages/Adm_personas";
 import Adm_hosts from "./pages/Adm_hosts";
 import Adm_reservas from "./pages/Adm_reservas";
+import Adm_pagos from "./pages/Adm_pagos";
 
 import Vitrina_casas from "./pages/Vitrina_casas";
 import Detalle_casa from "./pages/Detalle_casa";
@@ -150,6 +151,14 @@ function AppLayout() {
             element={
               <ProtectedRoute requireAdmin>
                 <Adm_reservas />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/adm_pagos"
+            element={
+              <ProtectedRoute requireAdmin>
+                <Adm_pagos />
               </ProtectedRoute>
             }
           />
