@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { DayPicker } from "react-day-picker";
+import { es } from "react-day-picker/locale";
+import "react-day-picker/style.css";
 import reservasService from "../api/reservas_service";
 import { useAuth } from "../context/AuthContext";
 import { mensajeError } from "../utils/mensajeError";
@@ -10,6 +13,17 @@ const IMAGEN_GENERICA =
 
 const COMISION = 0.10; // 10%
 
+// Las fechas viajan como "YYYY-MM-DD"; se comparan como texto y se
+// convierten a Date local solo para el calendario
+const aTexto = (d) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const aFecha = (s) => {
+  const [y, m, d] = s.split("-").map(Number);
+  return new Date(y, m - 1, d);
+};
+const formatoCorto = (s) =>
+  aFecha(s).toLocaleDateString("es", { day: "numeric", month: "short", year: "numeric" });
+
 export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }) {
   const { user } = useAuth();
 
@@ -17,6 +31,18 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
   const [fechaFin, setFechaFin] = useState("");
   const [loading, setLoading] = useState(false);
   const [calculo, setCalculo] = useState(null);
+  const [ocupadas, setOcupadas] = useState([]);
+
+  const cargarOcupadas = () => {
+    reservasService
+      .getFechasOcupadas(casa.id)
+      .then(setOcupadas)
+      .catch(() => setOcupadas([])); // si falla, el backend igual valida al reservar
+  };
+
+  useEffect(() => {
+    if (show && casa) cargarOcupadas();
+  }, [show, casa?.id]);
 
   // Recalcular totales cuando cambian fechas
   useEffect(() => {
@@ -41,7 +67,38 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
     }
   }, [show]);
 
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = aTexto(new Date());
+
+  // Una reserva ocupa las noches de fecha_inicio a fecha_fin - 1;
+  // el día de salida queda libre para que otro huésped entre
+  const nocheOcupada = (s) =>
+    ocupadas.some((r) => r.fecha_inicio <= s && s < r.fecha_fin);
+
+  // Eligiendo la salida: se puede llegar hasta el primer día en que entra otra reserva
+  const eligiendoSalida = fechaInicio && !fechaFin;
+  const limiteSalida = eligiendoSalida
+    ? ocupadas
+        .map((r) => r.fecha_inicio)
+        .filter((s) => s > fechaInicio)
+        .sort()[0]
+    : undefined;
+
+  const diaDeshabilitado = (dia) => {
+    const s = aTexto(dia);
+    if (s < hoy) return true;
+    if (eligiendoSalida && s > fechaInicio) return !!limiteSalida && s > limiteSalida;
+    return nocheOcupada(s); // eligiendo (o cambiando) la llegada
+  };
+
+  const elegirDia = (dia) => {
+    const s = aTexto(dia);
+    if (eligiendoSalida && s > fechaInicio) {
+      setFechaFin(s);
+    } else {
+      setFechaInicio(s);
+      setFechaFin("");
+    }
+  };
 
   const handleReservar = async () => {
     if (!calculo) { toast.error("Selecciona fechas válidas"); return; }
@@ -64,6 +121,12 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
       onClose();
     } catch (err) {
       toast.error(mensajeError(err, "Error al crear la reserva"));
+      if (err?.response?.status === 409) {
+        // Alguien reservó esas fechas mientras tanto
+        cargarOcupadas();
+        setFechaInicio("");
+        setFechaFin("");
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +155,8 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
         <div
           style={{
             width: "100%", maxWidth: 480, background: "#fff",
-            borderRadius: 20, overflow: "hidden", pointerEvents: "all",
+            borderRadius: 20, overflowX: "hidden", overflowY: "auto",
+            maxHeight: "calc(100vh - 40px)", pointerEvents: "all",
             boxShadow: "0 24px 80px rgba(0,140,200,0.25)",
             animation: "slideUp 0.3s cubic-bezier(.22,1,.36,1)",
             fontFamily: "'DM Sans', sans-serif",
@@ -146,31 +210,39 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
             </div>
 
             {/* Fechas */}
-            <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 12, marginBottom: 12 }}>
               <div style={{ flex: 1 }}>
                 <label style={labelStyle}>Llegada</label>
-                <input
-                  type="date"
-                  min={hoy}
-                  value={fechaInicio}
-                  onChange={(e) => {
-                    setFechaInicio(e.target.value);
-                    if (fechaFin && e.target.value >= fechaFin) setFechaFin("");
-                  }}
-                  style={inputStyle}
-                />
+                <div style={{ ...inputStyle, color: fechaInicio ? "#003a56" : "#aac8d6" }}>
+                  {fechaInicio ? formatoCorto(fechaInicio) : "Elige un día"}
+                </div>
               </div>
               <div style={{ flex: 1 }}>
                 <label style={labelStyle}>Salida</label>
-                <input
-                  type="date"
-                  min={fechaInicio || hoy}
-                  value={fechaFin}
-                  onChange={(e) => setFechaFin(e.target.value)}
-                  style={inputStyle}
-                />
+                <div style={{ ...inputStyle, color: fechaFin ? "#003a56" : "#aac8d6" }}>
+                  {fechaFin ? formatoCorto(fechaFin) : fechaInicio ? "Elige un día" : "—"}
+                </div>
               </div>
             </div>
+
+            <div className="calendario-reserva" style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}>
+              <DayPicker
+                mode="range"
+                locale={es}
+                startMonth={aFecha(hoy)}
+                selected={{
+                  from: fechaInicio ? aFecha(fechaInicio) : undefined,
+                  to: fechaFin ? aFecha(fechaFin) : undefined,
+                }}
+                onSelect={(_, dia) => elegirDia(dia)}
+                disabled={diaDeshabilitado}
+                modifiers={{ ocupado: (dia) => nocheOcupada(aTexto(dia)) }}
+                modifiersClassNames={{ ocupado: "dia-ocupado" }}
+              />
+            </div>
+            <p style={{ textAlign: "center", fontSize: 11, color: "#8bb8c8", margin: "0 0 16px" }}>
+              Los días tachados ya están reservados
+            </p>
 
             {/* Resumen de costos */}
             {calculo ? (
@@ -251,7 +323,15 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
         @keyframes fadeIn  { from{opacity:0} to{opacity:1} }
         @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
         @keyframes spin    { to{transform:rotate(360deg)} }
-        input[type="date"]:focus { outline: none; border-color: #00b4e6 !important; box-shadow: 0 0 0 3px rgba(0,180,230,0.14); }
+        .calendario-reserva .rdp-root {
+          --rdp-accent-color: #00b4e6;
+          --rdp-accent-background-color: rgba(0,180,230,0.12);
+          --rdp-day-height: 38px; --rdp-day-width: 38px;
+          --rdp-day_button-height: 36px; --rdp-day_button-width: 36px;
+          font-size: 14px; color: #003a56;
+        }
+        .calendario-reserva .dia-ocupado { text-decoration: line-through; color: #c9a3a3; }
+        .calendario-reserva .dia-ocupado.rdp-disabled { opacity: 1; }
       `}</style>
     </>
   );

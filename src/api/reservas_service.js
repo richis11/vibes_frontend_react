@@ -33,6 +33,11 @@ const eliminarReserva = async (id) => {
     return (await api.delete(`${baseURL}/${id}`));
 }
 
+// Público: [{ fecha_inicio, fecha_fin }] de las reservas activas de la casa
+const getFechasOcupadas = async (casaId) => {
+    return (await api.get(`${baseURL}/casa/${casaId}/fechas-ocupadas`)).data;
+}
+
 const getNewReservas = async () => {
     return (await api.get(`${baseURL}/new/reservas/`)).data;
 }
@@ -46,5 +51,6 @@ export default {
     editarReserva,
     eliminarReserva,
     getNewReservas,
-    buscarReservas
+    buscarReservas,
+    getFechasOcupadas
 }
