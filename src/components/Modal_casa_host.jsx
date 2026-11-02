@@ -143,7 +143,7 @@ export default function Modal_casa_host({
           pointerEvents: "none",
         }}
       >
-        <div
+        <div className="modal-scroll"
           style={{
             width: "100%",
             maxWidth: 520,

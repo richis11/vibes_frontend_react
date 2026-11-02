@@ -67,7 +67,7 @@ function Modal_casas({ show, modo, casa, handleClose, onSuccess }) {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered >
+    <Modal show={show} onHide={handleClose} centered className="adm-modal">
       <Modal.Header closeButton>
         <Modal.Title>
           {modo === "editar"

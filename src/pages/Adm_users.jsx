@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Table, Badge } from "react-bootstrap";
+import AdminPage from "../components/AdminPage";
 import useUsers from "../hooks/useUsers";
 import Modal_user from "../components/Modal_user";
 
@@ -35,20 +36,18 @@ function Adm_users() {
     }
   };
 
-  if (loading) return <p className="mt-4">Cargando usuarios...</p>;
-  if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <div style={{paddingTop:"50px"}}>
-      <br />
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Administración de Usuarios</h2>
-        <Button variant="primary" onClick={handleNuevo}>
-          Nuevo Usuario
-        </Button>
-      </div>
+    <>
+      <AdminPage
+        titulo="Usuarios"
+        subtitulo={`${users.length} ${users.length === 1 ? "usuario" : "usuarios"}`}
+        loading={loading}
+        error={error}
+        accion={<Button variant="primary" onClick={handleNuevo}>Nuevo Usuario</Button>}
+      >
 
-      <Table striped bordered hover responsive className="text-start">
+      <Table hover responsive className="text-start mb-0">
         <thead>
           <tr>
             <th>ID</th>
@@ -101,7 +100,7 @@ function Adm_users() {
               <td>
                 <Button
                   size="sm"
-                  variant="warning"
+                  variant="outline-primary"
                   onClick={() => handleEditar(user)}
                 >
                   Editar
@@ -111,6 +110,7 @@ function Adm_users() {
           ))}
         </tbody>
       </Table>
+      </AdminPage>
 
       {/* Modal User */}
       <Modal_user
@@ -120,7 +120,7 @@ function Adm_users() {
         handleClose={() => setShowModal(false)}
         onSuccess={refetch}
       />
-    </div>
+    </>
   );
 }
 

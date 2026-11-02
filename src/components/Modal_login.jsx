@@ -475,7 +475,7 @@ export default function Modal_login({ show, onClose, onSuccess }) {
           pointerEvents: "none",
         }}
       >
-        <div
+        <div className="modal-scroll"
           style={{
             width: "100%",
             maxWidth: 440,

@@ -143,7 +143,7 @@ export default function Modal_imagenes({ show, onClose, casa, onImagenChange }) 
           </div>
 
           {/* Contenido scrolleable */}
-          <div style={{ overflowY: "auto", padding: 24, flex: 1 }}>
+          <div className="modal-scroll" style={{ overflowY: "auto", padding: 24, flex: 1 }}>
 
             {/* Zona de drop */}
             <div

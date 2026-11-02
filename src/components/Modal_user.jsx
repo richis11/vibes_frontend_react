@@ -65,7 +65,7 @@ function Modal_user({ show, modo, user, handleClose, onSuccess }) {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered>
+    <Modal show={show} onHide={handleClose} centered className="adm-modal">
       <Modal.Header closeButton>
         <Modal.Title>
           {modo === "editar" ? `Editar ${user?.email}` : "Nuevo usuario"}

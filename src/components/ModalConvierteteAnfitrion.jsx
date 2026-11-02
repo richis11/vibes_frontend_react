@@ -86,7 +86,7 @@ export default function ModalConvierteAnfitrion({ show, onClose }) {
           pointerEvents: "none",
         }}
       >
-        <div
+        <div className="modal-scroll"
           style={{
             width: "100%",
             maxWidth: 580,

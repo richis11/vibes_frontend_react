@@ -145,7 +145,7 @@ function Modal_reservas({ show, modo, reserva, handleClose, onSuccess }) {
   };
 
   return (
-    <Modal show={show} onHide={handleClose} centered size="lg">
+    <Modal show={show} onHide={handleClose} centered className="adm-modal" size="lg">
       <Modal.Header closeButton>
         <Modal.Title>
           {modo === "editar"

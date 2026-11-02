@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Table, Badge } from "react-bootstrap";
+import AdminPage from "../components/AdminPage";
 import useReservas from "../hooks/useReservas";
 import Modal_reservas from "../components/Modal_reservas";
 
@@ -41,20 +42,18 @@ function Adm_reservas() {
     }
   };
 
-  if (loading) return <p className="mt-4">Cargando reservas...</p>;
-  if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <div style={{paddingTop:"50px"}}>
-      <br />
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Administración de Reservas</h2>
-        <Button variant="primary" onClick={handleNueva}>
-          Nueva Reserva
-        </Button>
-      </div>
+    <>
+      <AdminPage
+        titulo="Reservas"
+        subtitulo={`${reservas.length} ${reservas.length === 1 ? "reserva" : "reservas"}`}
+        loading={loading}
+        error={error}
+        accion={<Button variant="primary" onClick={handleNueva}>Nueva Reserva</Button>}
+      >
 
-      <Table striped bordered hover responsive className="text-start">
+      <Table hover responsive className="text-start mb-0">
         <thead>
           <tr>
             <th>ID</th>
@@ -73,7 +72,7 @@ function Adm_reservas() {
         <tbody>
           {reservas.length === 0 ? (
             <tr>
-              <td colSpan="11" className="text-center text-muted">
+              <td colSpan="11" className="adm-vacio">
                 No hay reservas disponibles
               </td>
             </tr>
@@ -115,7 +114,7 @@ function Adm_reservas() {
                 <td>
                   <Button
                     size="sm"
-                    variant="warning"
+                    variant="outline-primary"
                     onClick={() => handleEditar(reserva)}
                   >
                     Editar
@@ -126,6 +125,7 @@ function Adm_reservas() {
           )}
         </tbody>
       </Table>
+      </AdminPage>
 
       <Modal_reservas
         show={showModal}
@@ -134,7 +134,7 @@ function Adm_reservas() {
         handleClose={() => setShowModal(false)}
         onSuccess={refetch}
       />
-    </div>
+    </>
   );
 }
 

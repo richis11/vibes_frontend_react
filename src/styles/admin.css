@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Estilo de la app aplicado a los componentes de Bootstrap del panel admin.
+   Todo va dentro de .adm (páginas) o .adm-modal (modales) para no afectar
+   al resto de la app. */
+
+.adm {
+  min-height: 100vh;
+  padding: 88px 0 60px;
+  background: linear-gradient(180deg, #edfaff 0%, #f5feff 100%);
+  font-family: 'DM Sans', sans-serif;
+  color: #003a56;
+}
+
+.adm-contenedor {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ── Cabecera ─────────────────────────────────────────────── */
+.adm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.adm-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #00b4e6;
+  text-transform: uppercase;
+}
+.adm-titulo {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 800;
+  color: #002d44;
+  letter-spacing: -0.02em;
+  margin: 6px 0 4px;
+}
+.adm-subtitulo {
+  color: #5aabb8;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ── Tarjeta + tabla ──────────────────────────────────────── */
+.adm-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1.5px solid rgba(0, 180, 230, 0.12);
+  box-shadow: 0 2px 16px rgba(0, 140, 190, 0.08);
+  overflow: hidden;
+}
+.adm-card .table-responsive { margin: 0; }
+.adm .table {
+  margin: 0;
+  font-size: 14px;
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: rgba(0, 180, 230, 0.05);
+  --bs-table-striped-bg: transparent;
+  vertical-align: middle;
+}
+.adm .table > :not(caption) > * > * {
+  border-left: none;
+  border-right: none;
+  border-color: rgba(0, 180, 230, 0.08);
+  padding: 12px 14px;
+  color: #003a56;
+}
+.adm .table thead th {
+  background: rgba(0, 180, 230, 0.06);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #007aaa;
+  white-space: nowrap;
+  border-bottom: 1.5px solid rgba(0, 180, 230, 0.15);
+}
+.adm .table tbody tr:last-child > * { border-bottom: none; }
+.adm .table td { white-space: nowrap; }
+.adm .table td.adm-celda-larga { white-space: normal; min-width: 180px; }
+
+.adm-vacio, .adm-estado {
+  text-align: center;
+  padding: 48px 20px;
+  color: #8bb8c8;
+  font-size: 14px;
+}
+.adm-estado.error { color: #ef4444; }
+.adm-spinner {
+  width: 28px; height: 28px; margin: 0 auto 12px;
+  border: 3px solid rgba(0, 180, 230, 0.2);
+  border-top-color: #00b4e6;
+  border-radius: 50%;
+  animation: adm-spin 0.7s linear infinite;
+}
+@keyframes adm-spin { to { transform: rotate(360deg); } }
+
+/* ── Botones ──────────────────────────────────────────────── */
+.adm .btn, .adm-modal .btn {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.18s;
+}
+.adm .btn-primary, .adm-modal .btn-primary {
+  background: linear-gradient(135deg, #00c6f0 0%, #0090c8 100%);
+  border: none;
+  box-shadow: 0 4px 14px rgba(0, 180, 230, 0.3);
+  padding: 9px 18px;
+}
+.adm .btn-primary:hover, .adm-modal .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 180, 230, 0.45);
+  transform: translateY(-1px);
+}
+.adm .btn-sm { padding: 5px 12px; font-size: 13px; }
+.adm .btn-outline-primary, .adm-modal .btn-outline-primary {
+  color: #0090c8;
+  border: 1.5px solid rgba(0, 180, 230, 0.3);
+  background: #fff;
+}
+.adm .btn-outline-primary:hover, .adm .btn-outline-primary.active,
+.adm-modal .btn-outline-primary:hover {
+  color: #0090c8;
+  background: rgba(0, 180, 230, 0.08);
+  border-color: #00b4e6;
+}
+.adm .btn-group .btn-primary { box-shadow: none; transform: none; }
+.adm .btn-success { background: #16a34a; border: none; }
+.adm .btn-outline-danger { border-width: 1.5px; }
+.adm-modal .btn-secondary {
+  background: #fff;
+  color: #5a7a8a;
+  border: 1.5px solid rgba(0, 120, 160, 0.2);
+}
+.adm-modal .btn-secondary:hover { background: #f2f8fb; color: #003a56; }
+
+/* ── Badges: tonos suaves como en "Mis reservas" ──────────── */
+.adm .badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 99px;
+  letter-spacing: 0.03em;
+}
+.adm .badge.bg-success   { background: rgba(22, 163, 74, 0.1) !important;  color: #16a34a; }
+.adm .badge.bg-warning   { background: rgba(217, 119, 6, 0.1) !important;  color: #d97706; }
+.adm .badge.bg-danger    { background: rgba(239, 68, 68, 0.1) !important;  color: #ef4444; }
+.adm .badge.bg-info      { background: rgba(0, 144, 200, 0.1) !important;  color: #0090c8; }
+.adm .badge.bg-primary   { background: rgba(0, 180, 230, 0.12) !important; color: #007aaa; }
+.adm .badge.bg-secondary { background: rgba(100, 116, 139, 0.1) !important; color: #64748b; }
+.adm .badge.bg-dark      { background: rgba(124, 58, 237, 0.1) !important; color: #7c3aed; }
+
+.adm img.rounded { object-fit: cover; border-radius: 10px !important; }
+.adm a { color: #0090c8; }
+
+/* ── Modales de Bootstrap ─────────────────────────────────── */
+.adm-modal .modal-content {
+  border: none;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0, 140, 200, 0.25);
+  font-family: 'DM Sans', sans-serif;
+  color: #003a56;
+}
+.adm-modal .modal-header {
+  background: linear-gradient(135deg, #00c6f0 0%, #0090c8 100%);
+  color: #fff;
+  border: none;
+  padding: 18px 24px;
+}
+.adm-modal .modal-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+}
+.adm-modal .btn-close { filter: invert(1) grayscale(1) brightness(2); opacity: 0.85; }
+.adm-modal .modal-body { padding: 22px 24px; }
+.adm-modal .modal-footer {
+  border-top: 1px solid rgba(0, 180, 230, 0.12);
+  padding: 14px 24px;
+}
+.adm-modal .form-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #007aaa;
+  margin-bottom: 6px;
+}
+.adm-modal .form-control, .adm-modal .form-select {
+  border-radius: 10px;
+  border: 1.5px solid rgba(0, 180, 230, 0.25);
+  color: #003a56;
+  font-size: 14px;
+  padding: 9px 12px;
+}
+.adm-modal .form-control:focus, .adm-modal .form-select:focus {
+  border-color: #00b4e6;
+  box-shadow: 0 0 0 3px rgba(0, 180, 230, 0.14);
+}
+.adm-modal .form-check-input:checked { background-color: #00b4e6; border-color: #00b4e6; }
+.adm-modal .form-check-input:focus { box-shadow: 0 0 0 3px rgba(0, 180, 230, 0.14); }
+
+@media (max-width: 600px) {
+  .adm-contenedor { padding: 0 16px; }
+  .adm-header { align-items: flex-start; }
+}

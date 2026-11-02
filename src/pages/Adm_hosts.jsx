@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Table, Badge } from "react-bootstrap";
+import AdminPage from "../components/AdminPage";
 import useHosts from "../hooks/useHosts";
 import Modal_hosts from "../components/Modal_hosts";
 
@@ -35,20 +36,18 @@ function Adm_hosts() {
     }
   };
 
-  if (loading) return <p className="mt-4">Cargando hosts...</p>;
-  if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <div style={{paddingTop:"50px"}}>
-      <br />
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Administración de Hosts</h2>
-        <Button variant="primary" onClick={handleNuevo}>
-          Nuevo Host
-        </Button>
-      </div>
+    <>
+      <AdminPage
+        titulo="Anfitriones"
+        subtitulo={`${hosts.length} ${hosts.length === 1 ? "anfitrión" : "anfitriones"}`}
+        loading={loading}
+        error={error}
+        accion={<Button variant="primary" onClick={handleNuevo}>Nuevo Host</Button>}
+      >
 
-      <Table striped bordered hover responsive className="text-start">
+      <Table hover responsive className="text-start mb-0">
         <thead>
           <tr>
             <th>ID</th>
@@ -115,7 +114,7 @@ function Adm_hosts() {
               <td>
                 <Button
                   size="sm"
-                  variant="warning"
+                  variant="outline-primary"
                   onClick={() => handleEditar(host)}
                 >
                   Editar
@@ -125,6 +124,7 @@ function Adm_hosts() {
           ))}
         </tbody>
       </Table>
+      </AdminPage>
 
       <Modal_hosts
         show={showModal}
@@ -133,7 +133,7 @@ function Adm_hosts() {
         handleClose={() => setShowModal(false)}
         onSuccess={refetch}
       />
-    </div>
+    </>
   );
 }
 

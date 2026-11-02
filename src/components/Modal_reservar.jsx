@@ -162,7 +162,7 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: 20, pointerEvents: "none",
       }}>
-        <div
+        <div className="modal-scroll"
           style={{
             width: "100%", maxWidth: 480, background: "#fff",
             borderRadius: 20, overflowX: "hidden", overflowY: "auto",

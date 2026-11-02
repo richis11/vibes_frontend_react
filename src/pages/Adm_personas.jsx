@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Table, Badge, Image } from "react-bootstrap";
+import AdminPage from "../components/AdminPage";
 import usePersonas from "../hooks/usePersonas";
 import Modal_personas from "../components/Modal_personas";
 
@@ -35,18 +36,18 @@ function Adm_personas() {
     }
   };
 
-  if (loading) return <p className="mt-4">Cargando personas...</p>;
-  if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <div style={{paddingTop:"50px"}}>
-      <br />
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Administración de Personas</h2>
-        <Button onClick={handleNuevo}>Nueva Persona</Button>
-      </div>
+    <>
+      <AdminPage
+        titulo="Clientes"
+        subtitulo={`${personas.length} ${personas.length === 1 ? "persona" : "personas"}`}
+        loading={loading}
+        error={error}
+        accion={<Button variant="primary" onClick={handleNuevo}>Nueva Persona</Button>}
+      >
 
-      <Table striped bordered hover responsive className="text-start">
+      <Table hover responsive className="text-start mb-0">
         <thead>
           <tr>
             <th>ID</th>
@@ -119,7 +120,7 @@ function Adm_personas() {
               <td>
                 <Button
                   size="sm"
-                  variant="warning"
+                  variant="outline-primary"
                   onClick={() => handleEditar(persona)}
                 >
                   Editar
@@ -129,6 +130,7 @@ function Adm_personas() {
           ))}
         </tbody>
       </Table>
+      </AdminPage>
 
       <Modal_personas
         show={showModal}
@@ -137,7 +139,7 @@ function Adm_personas() {
         handleClose={() => setShowModal(false)}
         onSuccess={refetch}
       />
-    </div>
+    </>
   );
 }
 

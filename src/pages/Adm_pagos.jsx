@@ -3,6 +3,7 @@ import { Button, Table, Badge, ButtonGroup } from "react-bootstrap";
 import { toast } from "react-toastify";
 import pagosService from "../api/pagos_service";
 import { mensajeError } from "../utils/mensajeError";
+import AdminPage from "../components/AdminPage";
 
 const FILTROS = [
   { key: "en_revision", label: "En revisión" },
@@ -74,10 +75,11 @@ function Adm_pagos() {
   };
 
   return (
-    <div style={{ paddingTop: "50px" }}>
-      <br />
-      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-        <h2>Pagos por transferencia</h2>
+    <AdminPage
+      titulo="Pagos por transferencia"
+      subtitulo={`${pagos.length} ${pagos.length === 1 ? "pago" : "pagos"}`}
+      loading={loading}
+      accion={
         <ButtonGroup>
           {FILTROS.map((f) => (
             <Button
@@ -89,12 +91,9 @@ function Adm_pagos() {
             </Button>
           ))}
         </ButtonGroup>
-      </div>
-
-      {loading ? (
-        <p className="mt-4">Cargando pagos...</p>
-      ) : (
-        <Table striped bordered hover responsive className="text-start align-middle">
+      }
+    >
+        <Table hover responsive className="text-start mb-0">
           <thead>
             <tr>
               <th>ID</th>
@@ -112,7 +111,7 @@ function Adm_pagos() {
           <tbody>
             {pagos.length === 0 ? (
               <tr>
-                <td colSpan="10" className="text-center text-muted">
+                <td colSpan="10" className="adm-vacio">
                   No hay pagos {FILTROS.find((f) => f.key === filtro)?.label.toLowerCase()}
                 </td>
               </tr>
@@ -181,8 +180,7 @@ function Adm_pagos() {
             )}
           </tbody>
         </Table>
-      )}
-    </div>
+    </AdminPage>
   );
 }
 

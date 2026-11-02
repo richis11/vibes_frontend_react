@@ -103,7 +103,7 @@ export default function Modal_pago({ show, onClose, reserva, onEnviado }) {
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: 20, pointerEvents: "none",
       }}>
-        <div style={{
+        <div className="modal-scroll" style={{
           width: "100%", maxWidth: 480, background: "#fff",
           borderRadius: 20, overflowX: "hidden", overflowY: "auto",
           maxHeight: "calc(100vh - 40px)", pointerEvents: "all",

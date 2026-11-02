@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button, Table, Badge } from "react-bootstrap";
+import AdminPage from "../components/AdminPage";
 import useCasas from "../hooks/useCasas";
 import Modal_casas from "../components/Modal_casas";
 import Modal_imagenes from "../components/Modal_imagenes";
@@ -46,21 +47,18 @@ function Adm_casas() {
     }
   };
 
-  if (loading) return <p className="mt-4">Cargando casas...</p>;
-  if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <div style={{paddingTop:"50px"}}>
-      <br />
+    <>
+      <AdminPage
+        titulo="Casas"
+        subtitulo={`${casas.length} ${casas.length === 1 ? "casa" : "casas"}`}
+        loading={loading}
+        error={error}
+        accion={<Button variant="primary" onClick={handleNuevo}>Nueva Casa</Button>}
+      >
 
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h2>Administración de Casas</h2>
-        <Button variant="primary" onClick={handleNuevo}>
-          Nueva Casa
-        </Button>
-      </div>
-
-      <Table striped bordered hover responsive className="text-start">
+      <Table hover responsive className="text-start mb-0">
         <thead>
           <tr>
             <th>ID</th>
@@ -124,14 +122,15 @@ function Adm_casas() {
               <td>
                 <Button
                   size="sm"
-                  variant="warning"
+                  variant="outline-primary"
                   onClick={() => handleEditar(casa)}
                 >
                   Editar
                 </Button>
                 <Button
                   size="sm"
-                  variant="info"
+                  variant="outline-primary"
+                  className="ms-1"
                   onClick={() => handleImagenes(casa)}
                   title="Gestionar imágenes"
                 >
@@ -142,6 +141,7 @@ function Adm_casas() {
           ))}
         </tbody>
       </Table>
+      </AdminPage>
 
       <Modal_casas
         show={showModal}
@@ -159,7 +159,7 @@ function Adm_casas() {
         }}
         casa={casaImagenes}
       />
-    </div>
+    </>
   );
 }
 

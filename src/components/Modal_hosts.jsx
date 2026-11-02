@@ -83,7 +83,7 @@ function Modal_host({ show, handleClose, modo, host, onSuccess }) {
   if (error) return <p className="text-danger mt-4">{error}</p>;
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={handleClose} centered className="adm-modal">
       <Modal.Header closeButton>
         <Modal.Title>
           {modo === "crear" ? "Nuevo Host" : "Editar Host"}
