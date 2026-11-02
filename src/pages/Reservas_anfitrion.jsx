@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import reservasService from "../api/reservas_service";
 import casaImagenesService from "../api/casa_imagenes_service";
+import { mensajeError } from "../utils/mensajeError";
 
 const IMAGEN_GENERICA =
   "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80";
@@ -56,6 +57,9 @@ const ESTADOS_OPCIONES = [
   { value: "cancelada", label: "❌ Cancelada" },
   { value: "reembolsada", label: "↩️ Reembolsada" },
 ];
+
+// Estados a los que el anfitrión puede mover una reserva (los pagos los marca la plataforma)
+const ESTADOS_EDITABLES_HOST = ["confirmada", "completada", "cancelada"];
 
 function BadgeEstado({ estado }) {
   const cfg = estadoConfig[estado] ?? {
@@ -116,8 +120,8 @@ function BotonesZona({ reserva, isMobile, onEstadoChanged }) {
       toast.success("Estado actualizado");
       onEstadoChanged(reserva.id, nuevoEstado);
       setEditandoEstado(false);
-    } catch {
-      toast.error("Error al actualizar el estado");
+    } catch (err) {
+      toast.error(mensajeError(err, "Error al actualizar el estado"));
     } finally {
       setGuardando(false);
     }
@@ -173,8 +177,16 @@ function BotonesZona({ reserva, isMobile, onEstadoChanged }) {
             zIndex: 10,
           }}
         >
-          {ESTADOS_OPCIONES.map((op) => (
-            <option key={op.value} value={op.value}>
+          {ESTADOS_OPCIONES.filter(
+            (op) =>
+              ESTADOS_EDITABLES_HOST.includes(op.value) ||
+              op.value === reserva.estado,
+          ).map((op) => (
+            <option
+              key={op.value}
+              value={op.value}
+              disabled={!ESTADOS_EDITABLES_HOST.includes(op.value)}
+            >
               {op.label}
             </option>
           ))}

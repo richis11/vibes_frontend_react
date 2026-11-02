@@ -3,6 +3,7 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import reservasService from "../api/reservas_service";
 import casasService from "../api/casas_service";
 import personasService from "../api/personas_service";
+import { mensajeError } from "../utils/mensajeError";
 
 function Modal_reservas({ show, modo, reserva, handleClose, onSuccess }) {
   const [casas, setCasas] = useState([]);
@@ -137,7 +138,7 @@ function Modal_reservas({ show, modo, reserva, handleClose, onSuccess }) {
       handleClose();
     } catch (err) {
       console.error(err);
-      alert("Error al guardar reserva");
+      alert(mensajeError(err, "Error al guardar reserva"));
     } finally {
       setLoading(false);
     }

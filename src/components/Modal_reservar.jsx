@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import reservasService from "../api/reservas_service";
 import { useAuth } from "../context/AuthContext";
+import { mensajeError } from "../utils/mensajeError";
 
 
 const IMAGEN_GENERICA =
@@ -51,23 +52,18 @@ export default function Modal_reservar({ show, onClose, casa, imagenPrincipal  }
 
     setLoading(true);
     try {
-      await reservasService.crearReserva({
+      // El backend toma al huésped del token y calcula noches, comisión y total
+      const { data } = await reservasService.crearReserva({
         casa_id: casa.id,
-        guest_id: user.persona_id,
         fecha_inicio: fechaInicio,
         fecha_fin: fechaFin,
-        noches: calculo.noches,
-        precio_por_noche: calculo.precioPorNoche,
-        subtotal: calculo.subtotal,
-        comision_plataforma: calculo.comision,
-        total: calculo.total,
-        moneda: "USD",
-        estado: "pendiente_pago",
       });
-      toast.success("¡Reserva creada exitosamente!");
+      toast.success(
+        `¡Reserva creada exitosamente! Total: $${data.total} ${data.moneda}`,
+      );
       onClose();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error al crear la reserva");
+      toast.error(mensajeError(err, "Error al crear la reserva"));
     } finally {
       setLoading(false);
     }

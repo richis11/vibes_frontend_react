@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import usersService from "../api/users_service";
+import { mensajeError } from "../utils/mensajeError";
 
 function Modal_user({ show, modo, user, handleClose, onSuccess }) {
   const initialState = {
@@ -50,8 +51,6 @@ function Modal_user({ show, modo, user, handleClose, onSuccess }) {
           stripe_customer_id: form.stripe_customer_id || null,
         });
       } else {
-        console.log("DATOS A ENVIAR")
-        console.log(form)
         await usersService.crearUser(form); // password incluido al crear
       }
 
@@ -59,7 +58,7 @@ function Modal_user({ show, modo, user, handleClose, onSuccess }) {
       handleClose();
     } catch (err) {
       console.error(err);
-      alert("Error al guardar usuario");
+      alert(mensajeError(err, "Error al guardar usuario"));
     } finally {
       setLoading(false);
     }
